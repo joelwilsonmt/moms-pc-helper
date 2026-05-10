@@ -47,7 +47,7 @@ export default function Home(): React.JSX.Element {
 
   return (
     <div className="screen" style={{ height: '100vh', boxSizing: 'border-box' }}>
-      <Greeting name={config?.userName ?? 'Donna'} />
+      <Greeting name={config?.userName ?? 'Jan'} />
 
       {/* ── Headline status card ─────────────────────────────────────── */}
       {loading && !lastChecked ? (
@@ -149,6 +149,18 @@ export default function Home(): React.JSX.Element {
               : 'Tap to check'
           }
           onClick={() => navigate('backup')}
+        />
+        <ActionCard
+          icon="🗝️"
+          title="Find My Stuff"
+          desc="Passwords, Wi-Fi, important docs"
+          onClick={() => navigate('vault-locked')}
+        />
+        <ActionCard
+          icon="🛡️"
+          title="Is this a scam?"
+          desc="Drop in an email or link"
+          onClick={() => navigate('scam')}
         />
       </div>
 

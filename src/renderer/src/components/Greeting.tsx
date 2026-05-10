@@ -15,7 +15,7 @@ function timeOfDay(): string {
   return 'evening'
 }
 
-export default function Greeting({ back, onBack, name = 'Donna' }: GreetingProps): React.JSX.Element {
+export default function Greeting({ back, onBack, name = 'Jan' }: GreetingProps): React.JSX.Element {
   if (back) {
     return (
       <button className="greeting-back" onClick={onBack} type="button">

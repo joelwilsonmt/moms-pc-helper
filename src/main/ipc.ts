@@ -4,6 +4,7 @@
 
 import { ipcMain, shell } from 'electron'
 import type { WindowsAdapter } from './adapters/WindowsAdapter'
+import { vault, VaultUnavailableError } from './services/vault'
 
 export function registerIpcHandlers(adapter: WindowsAdapter): void {
   // --- system ---
@@ -35,16 +36,17 @@ export function registerIpcHandlers(adapter: WindowsAdapter): void {
 
   // --- vault (stubs until milestone 6) ---
   ipcMain.handle('vault:isInitialized', () => false)
-  ipcMain.handle('vault:initialize', () => { throw new Error('Vault not yet implemented') })
-  ipcMain.handle('vault:unlock', () => false)
-  ipcMain.handle('vault:unlockWithHello', () => false)
-  ipcMain.handle('vault:lock', () => undefined)
-  ipcMain.handle('vault:list', () => [])
-  ipcMain.handle('vault:get', () => null)
-  ipcMain.handle('vault:create', () => { throw new Error('Vault not yet implemented') })
-  ipcMain.handle('vault:update', () => { throw new Error('Vault not yet implemented') })
-  ipcMain.handle('vault:delete', () => undefined)
-  ipcMain.handle('vault:search', () => [])
+  ipcMain.handle('vault:isInitialized', () => vault.isInitialized())
+  ipcMain.handle('vault:initialize', (_e, pw: string) => vault.initialize(pw))
+  ipcMain.handle('vault:unlock', (_e, pw: string) => vault.unlock(pw))
+  ipcMain.handle('vault:unlockWithHello', () => vault.unlockWithHello())
+  ipcMain.handle('vault:lock', () => vault.lock())
+  ipcMain.handle('vault:list', (_e, cat?: string) => safeVault(() => vault.list(cat)))
+  ipcMain.handle('vault:get', (_e, id: string) => safeVault(() => vault.get(id)))
+  ipcMain.handle('vault:create', (_e, entry) => safeVault(() => vault.create(entry)))
+  ipcMain.handle('vault:update', (_e, id: string, patch) => safeVault(() => vault.update(id, patch)))
+  ipcMain.handle('vault:delete', (_e, id: string) => safeVault(() => vault.delete(id)))
+  ipcMain.handle('vault:search', (_e, q: string) => safeVault(() => vault.search(q)))
 
   // --- subs (stubs until milestone 12) ---
   ipcMain.handle('subs:list', () => [])
@@ -76,9 +78,20 @@ export function registerIpcHandlers(adapter: WindowsAdapter): void {
   ipcMain.handle('app:updateConfig', () => defaultConfig())
 }
 
+// Wraps vault calls — returns a typed error string on VaultUnavailableError so
+// the renderer can show a friendly "Windows only" message instead of crashing.
+function safeVault<T>(fn: () => T): T | { __vaultError: string } {
+  try {
+    return fn()
+  } catch (e) {
+    if (e instanceof VaultUnavailableError) return { __vaultError: e.message }
+    throw e
+  }
+}
+
 function defaultConfig() {
   return {
-    userName: 'Donna',
+    userName: 'Jan',
     panicEmail: '',
     quietHoursStart: '21:00',
     quietHoursEnd: '07:00',

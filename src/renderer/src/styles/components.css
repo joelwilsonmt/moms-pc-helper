@@ -114,6 +114,9 @@
   gap: 12px;
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
+@media (min-width: 720px) {
+  .grid-cards { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
 .action-card {
   background: var(--paper);
   border: 1.5px solid var(--line);
