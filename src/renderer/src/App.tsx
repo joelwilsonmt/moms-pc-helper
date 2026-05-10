@@ -1,5 +1,6 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { NavProvider, useNav } from './nav'
+import type { Screen } from './nav'
 import Home from './screens/Home'
 import VaultLocked from './screens/VaultLocked'
 import VaultOpen from './screens/VaultOpen'
@@ -15,6 +16,7 @@ import Backup from './screens/Backup'
 import PrintQueue from './screens/PrintQueue'
 import Updates from './screens/Updates'
 import Subs from './screens/Subs'
+import Onboarding from './screens/Onboarding'
 
 function Router(): React.JSX.Element {
   const { screen, back } = useNav()
@@ -35,6 +37,7 @@ function Router(): React.JSX.Element {
     case 'print':        return <PrintQueue />
     case 'updates':      return <Updates />
     case 'subs':         return <Subs />
+    case 'onboarding':   return <Onboarding />
     default:             return <Placeholder screen={screen} onBack={back} />
   }
 }
@@ -57,8 +60,21 @@ function Placeholder({ screen, onBack }: { screen: string; onBack: () => void })
 }
 
 export default function App(): React.JSX.Element {
+  const [initialScreen, setInitialScreen] = useState<Screen | null>(null)
+
+  useEffect(() => {
+    window.api.app.isFirstRun().then((first) => {
+      setInitialScreen(first ? 'onboarding' : 'home')
+    })
+  }, [])
+
+  if (!initialScreen) {
+    // Blank while we check — avoids flash of home before redirecting to onboarding
+    return <div style={{ height: '100vh', background: 'var(--bg)' }} />
+  }
+
   return (
-    <NavProvider initial="home">
+    <NavProvider initial={initialScreen}>
       <Router />
     </NavProvider>
   )

@@ -9,6 +9,7 @@ import { sendPanic } from './services/panic'
 import { captureScreenshot } from './services/diagnostics'
 import * as content from './services/content'
 import * as scam from './services/scam'
+import * as appConfig from './services/appConfig'
 
 export function registerIpcHandlers(adapter: WindowsAdapter): void {
   // --- system ---
@@ -66,14 +67,14 @@ export function registerIpcHandlers(adapter: WindowsAdapter): void {
 
   // --- panic ---
   ipcMain.handle('panic:send', async (_e, message: string, includeScreenshot: boolean) => {
-    const config = defaultConfig()
+    const cfg = appConfig.getConfig()
     return sendPanic(message, includeScreenshot, {
-      smtpHost:     config.smtp.host,
-      smtpPort:     config.smtp.port,
-      smtpUser:     config.smtp.user,
-      smtpPassword: config.smtp.password,
-      toEmail:      config.panicEmail,
-      fromName:     `${config.userName}'s PC Helper`
+      smtpHost:     cfg.smtp.host,
+      smtpPort:     cfg.smtp.port,
+      smtpUser:     cfg.smtp.user,
+      smtpPassword: cfg.smtp.password,
+      toEmail:      cfg.panicEmail,
+      fromName:     `${cfg.userName}'s PC Helper`
     }, adapter)
   })
   ipcMain.handle('panic:captureScreenshot', async () => {
@@ -91,10 +92,10 @@ export function registerIpcHandlers(adapter: WindowsAdapter): void {
   ipcMain.handle('content:resetChecklist', (_e, tId: string) => content.resetChecklist(tId))
 
   // --- app ---
-  ipcMain.handle('app:isFirstRun', () => true)
-  ipcMain.handle('app:completeOnboarding', () => undefined)
-  ipcMain.handle('app:getConfig', () => defaultConfig())
-  ipcMain.handle('app:updateConfig', () => defaultConfig())
+  ipcMain.handle('app:isFirstRun', () => appConfig.isFirstRun())
+  ipcMain.handle('app:completeOnboarding', () => appConfig.completeOnboarding())
+  ipcMain.handle('app:getConfig', () => appConfig.getConfig())
+  ipcMain.handle('app:updateConfig', (_e, patch: Partial<Parameters<typeof appConfig.updateConfig>[0]>) => appConfig.updateConfig(patch))
 }
 
 // Wraps vault calls — returns a typed error string on VaultUnavailableError so
@@ -108,14 +109,3 @@ function safeVault<T>(fn: () => T): T | { __vaultError: string } {
   }
 }
 
-function defaultConfig() {
-  return {
-    userName: 'Jan',
-    panicEmail: '',
-    quietHoursStart: '21:00',
-    quietHoursEnd: '07:00',
-    vaultAutoLockMinutes: 15,
-    scanIntervalMinutes: 5,
-    smtp: { host: '', port: 587, user: '', password: '' }
-  }
-}
