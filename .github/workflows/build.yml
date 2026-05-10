@@ -18,7 +18,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
 
       - name: Install (skip native compile)
@@ -40,14 +40,23 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
 
-      - name: Install (with scripts so native modules compile)
-        run: npm ci
+      # node-gyp (used to compile better-sqlite3) needs Python
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # Install without running compile scripts — we'll rebuild for the
+      # correct Electron ABI in the next step instead
+      - name: Install dependencies
+        run: npm ci --ignore-scripts
 
       - name: Rebuild native modules for Electron ABI
-        # Recompiles better-sqlite3-multiple-ciphers against Electron's Node ABI
+        # Compiles better-sqlite3-multiple-ciphers against Electron's Node ABI
+        # (not the system Node ABI). This is the step that actually produces
+        # the .node binary that ships in the installer.
         run: npx electron-builder install-app-deps
 
       - name: Build renderer + main
@@ -56,10 +65,11 @@ jobs:
       - name: Package NSIS installer
         run: npx electron-builder --win --publish never
         env:
-          # Unsigned for now — SmartScreen warns on first run; Joel clicks through.
-          # To eliminate the warning: add CSC_LINK + CSC_KEY_PASSWORD repo secrets
-          # pointing to a PFX code-signing certificate.
+          # Unsigned — SmartScreen warns on first run; Joel clicks "More info → Run anyway"
+          # Add CSC_LINK + CSC_KEY_PASSWORD repo secrets when a code-signing cert is purchased
           CSC_IDENTITY_AUTO_DISCOVERY: false
+          # Suppress electron-builder telemetry
+          EP_DRAFT: false
 
       - name: Upload installer artifact
         uses: actions/upload-artifact@v4
