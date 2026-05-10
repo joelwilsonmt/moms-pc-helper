@@ -9,6 +9,7 @@ import GuideViewer from './screens/GuideViewer'
 import ChecklistView from './screens/ChecklistView'
 import Manuals from './screens/Manuals'
 import Checklists from './screens/Checklists'
+import Scam from './screens/Scam'
 
 function Router(): React.JSX.Element {
   const { screen, back } = useNav()
@@ -23,6 +24,7 @@ function Router(): React.JSX.Element {
     case 'checklist':    return <ChecklistView />
     case 'manuals':      return <Manuals />
     case 'checklists':   return <Checklists />
+    case 'scam':         return <Scam />
     default:             return <Placeholder screen={screen} onBack={back} />
   }
 }

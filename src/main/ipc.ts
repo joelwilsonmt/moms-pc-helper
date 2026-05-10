@@ -8,6 +8,7 @@ import { vault, VaultUnavailableError } from './services/vault'
 import { sendPanic } from './services/panic'
 import { captureScreenshot } from './services/diagnostics'
 import * as content from './services/content'
+import * as scam from './services/scam'
 
 export function registerIpcHandlers(adapter: WindowsAdapter): void {
   // --- system ---
@@ -59,9 +60,9 @@ export function registerIpcHandlers(adapter: WindowsAdapter): void {
   ipcMain.handle('subs:delete', () => undefined)
   ipcMain.handle('subs:detectOverlaps', () => [])
 
-  // --- scam (stub until milestone 11) ---
-  ipcMain.handle('scam:analyze', () => { throw new Error('Scam shield not yet implemented') })
-  ipcMain.handle('scam:history', () => [])
+  // --- scam ---
+  ipcMain.handle('scam:analyze', (_e, content_: string) => scam.analyze(content_))
+  ipcMain.handle('scam:history', (_e, limit: number) => scam.history(limit))
 
   // --- panic ---
   ipcMain.handle('panic:send', async (_e, message: string, includeScreenshot: boolean) => {
