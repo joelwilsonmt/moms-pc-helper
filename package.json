@@ -65,14 +65,13 @@
     "zustand": "^4.5.4"
   },
   "optionalDependencies": {
-    "better-sqlite3": "^9.6.0",
-    "better-sqlite3-multiple-ciphers": "^9.1.1"
+    "better-sqlite3-multiple-ciphers": "^11.0.0"
   },
   "devDependencies": {
     "@electron-toolkit/eslint-config-prettier": "^2.0.0",
     "@electron-toolkit/eslint-config-ts": "^2.0.0",
     "@electron-toolkit/tsconfig": "^1.0.1",
-    "@types/better-sqlite3": "^7.6.10",
+    "@types/better-sqlite3": "^7.6.0",
     "@types/dompurify": "^3.0.5",
     "@types/node": "^20.14.9",
     "@types/nodemailer": "^6.4.15",
