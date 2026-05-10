@@ -40,8 +40,7 @@ export function registerIpcHandlers(adapter: WindowsAdapter): void {
     shell.openExternal(url)
   })
 
-  // --- vault (stubs until milestone 6) ---
-  ipcMain.handle('vault:isInitialized', () => false)
+  // --- vault ---
   ipcMain.handle('vault:isInitialized', () => vault.isInitialized())
   ipcMain.handle('vault:initialize', (_e, pw: string) => vault.initialize(pw))
   ipcMain.handle('vault:unlock', (_e, pw: string) => vault.unlock(pw))

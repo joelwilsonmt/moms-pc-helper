@@ -17,6 +17,7 @@ import PrintQueue from './screens/PrintQueue'
 import Updates from './screens/Updates'
 import Subs from './screens/Subs'
 import Onboarding from './screens/Onboarding'
+import Advanced from './screens/Advanced'
 
 function Router(): React.JSX.Element {
   const { screen, back } = useNav()
@@ -38,6 +39,7 @@ function Router(): React.JSX.Element {
     case 'updates':      return <Updates />
     case 'subs':         return <Subs />
     case 'onboarding':   return <Onboarding />
+    case 'advanced':     return <Advanced />
     default:             return <Placeholder screen={screen} onBack={back} />
   }
 }

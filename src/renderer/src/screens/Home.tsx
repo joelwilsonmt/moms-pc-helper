@@ -214,6 +214,23 @@ export default function Home(): React.JSX.Element {
         >
           ✅ Checklists
         </button>
+        <button
+          type="button"
+          onClick={() => navigate('advanced')}
+          style={{
+            padding: '10px 14px',
+            background: 'var(--surface)',
+            border: '1.5px solid var(--border)',
+            borderRadius: 10,
+            fontSize: 14,
+            fontWeight: 600,
+            color: 'var(--muted)',
+            cursor: 'pointer'
+          }}
+          title="Advanced settings"
+        >
+          ⚙️
+        </button>
       </div>
 
       {/* ── Last-checked footnote ────────────────────────────────────── */}
