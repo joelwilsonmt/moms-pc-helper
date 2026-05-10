@@ -4,6 +4,7 @@ import Home from './screens/Home'
 import VaultLocked from './screens/VaultLocked'
 import VaultOpen from './screens/VaultOpen'
 import Stuck from './screens/Stuck'
+import DiskReport from './screens/DiskReport'
 
 function Router(): React.JSX.Element {
   const { screen, back } = useNav()
@@ -13,6 +14,7 @@ function Router(): React.JSX.Element {
     case 'stuck':        return <Stuck />
     case 'vault-locked': return <VaultLocked />
     case 'vault-open':   return <VaultOpen />
+    case 'disk':         return <DiskReport />
     default:             return <Placeholder screen={screen} onBack={back} />
   }
 }

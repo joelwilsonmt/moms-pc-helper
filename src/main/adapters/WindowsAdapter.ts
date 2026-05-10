@@ -13,7 +13,8 @@ import type {
   InternetStatus,
   BackupStatus,
   InstalledProgram,
-  UpdatesAvailable
+  UpdatesAvailable,
+  FolderSize
 } from '@shared/types'
 
 export interface WindowsAdapter {
@@ -33,6 +34,8 @@ export interface WindowsAdapter {
   // Software
   getInstalledPrograms(): Promise<InstalledProgram[]>;
   getUpdatesAvailable(): Promise<UpdatesAvailable>;
+
+  getFolderSizes(): Promise<FolderSize[]>;
 
   // Launch built-in Windows UI (opening a UI is not modifying anything)
   launchSettings(uri: 'backup' | 'windowsupdate' | 'printers' | 'storagesense' | 'appsfeatures'): Promise<void>;

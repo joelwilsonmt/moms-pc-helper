@@ -10,7 +10,8 @@ import type {
   InternetStatus,
   BackupStatus,
   InstalledProgram,
-  UpdatesAvailable
+  UpdatesAvailable,
+  FolderSize
 } from '@shared/types'
 
 const delay = (ms = 120): Promise<void> => new Promise((r) => setTimeout(r, ms))
@@ -151,6 +152,16 @@ export class MockAdapter implements WindowsAdapter {
         { name: 'Zoom', fromVersion: '6.1.6', toVersion: '6.2.0', estimatedMinutes: 2 }
       ]
     }
+  }
+
+  async getFolderSizes(): Promise<FolderSize[]> {
+    await delay()
+    return [
+      { name: 'Pictures',                 path: 'C:\\Users\\Jan\\Pictures',   sizeGB: 47.2, itemCount: 1247 },
+      { name: 'OneDrive',                 path: 'C:\\Users\\Jan\\OneDrive',   sizeGB: 12.1, itemCount: 843 },
+      { name: 'Downloads',                path: 'C:\\Users\\Jan\\Downloads',  sizeGB: 18.4, itemCount: 312 },
+      { name: 'Recycle bin & temp files', path: '',                           sizeGB: 5.9,  itemCount: null }
+    ]
   }
 
   async launchSettings(

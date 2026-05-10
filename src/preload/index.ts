@@ -12,7 +12,8 @@ const api: IpcAPI = {
     getInternetStatus: () => ipcRenderer.invoke('system:getInternetStatus'),
     getBackupStatus: () => ipcRenderer.invoke('system:getBackupStatus'),
     getInstalledPrograms: () => ipcRenderer.invoke('system:getInstalledPrograms'),
-    getUpdatesAvailable: () => ipcRenderer.invoke('system:getUpdatesAvailable')
+    getUpdatesAvailable: () => ipcRenderer.invoke('system:getUpdatesAvailable'),
+    getFolderSizes: () => ipcRenderer.invoke('system:getFolderSizes')
   },
 
   launch: {

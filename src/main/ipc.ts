@@ -17,6 +17,7 @@ export function registerIpcHandlers(adapter: WindowsAdapter): void {
   ipcMain.handle('system:getBackupStatus', () => adapter.getBackupStatus())
   ipcMain.handle('system:getInstalledPrograms', () => adapter.getInstalledPrograms())
   ipcMain.handle('system:getUpdatesAvailable', () => adapter.getUpdatesAvailable())
+  ipcMain.handle('system:getFolderSizes', () => adapter.getFolderSizes())
 
   // --- launch ---
   ipcMain.handle('launch:settings', (_e, uri: string) => {

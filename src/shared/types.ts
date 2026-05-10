@@ -48,6 +48,13 @@ export interface BackupStatus {
   }>;
 }
 
+export interface FolderSize {
+  name: string       // "Pictures", "Downloads", "Recycle bin & temp files"
+  path: string       // full path (empty for synthetic entries like recycle bin)
+  sizeGB: number
+  itemCount: number | null
+}
+
 export interface InstalledProgram {
   name: string;
   publisher?: string;
@@ -134,6 +141,7 @@ export interface IpcAPI {
     getBackupStatus(): Promise<BackupStatus>;
     getInstalledPrograms(): Promise<InstalledProgram[]>;
     getUpdatesAvailable(): Promise<UpdatesAvailable>;
+    getFolderSizes(): Promise<FolderSize[]>;
   };
   launch: {
     settings(uri: 'backup' | 'windowsupdate' | 'printers' | 'storagesense' | 'appsfeatures'): Promise<void>;

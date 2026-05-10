@@ -12,7 +12,8 @@ import type {
   InternetStatus,
   BackupStatus,
   InstalledProgram,
-  UpdatesAvailable
+  UpdatesAvailable,
+  FolderSize
 } from '@shared/types'
 import { runScript } from '../powershell'
 
@@ -68,6 +69,16 @@ export class RealWindowsAdapter implements WindowsAdapter {
 
   async getUpdatesAvailable(): Promise<UpdatesAvailable> {
     return runScript<UpdatesAvailable>('get-windows-updates.ps1')
+  }
+
+  async getFolderSizes(): Promise<FolderSize[]> {
+    const raw = await runScript<Array<{ name: string; path: string; sizeGB: number; itemCount: number | null }>>('get-folder-sizes.ps1')
+    return raw.map((f) => ({
+      name: f.name,
+      path: f.path ?? '',
+      sizeGB: f.sizeGB,
+      itemCount: f.itemCount ?? null
+    }))
   }
 
   async launchSettings(

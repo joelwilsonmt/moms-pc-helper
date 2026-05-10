@@ -1,5 +1,5 @@
-// Simple screen-based router — no external dependency needed for this app's linear navigation.
-// Each screen is a string literal. Components call navigate() to change screens.
+// Simple screen-based router with optional params.
+// Components call navigate('screen', { guideId: '...' }) and read useParams().
 
 import React, { createContext, useContext, useState } from 'react'
 
@@ -19,11 +19,17 @@ export type Screen =
   | 'checklists'
   | 'onboarding'
   | 'advanced'
+  | 'guide'           // params: { guideId: string }
   | '_component-demo'
+
+export type NavParams = Record<string, string>
+
+interface HistoryEntry { screen: Screen; params: NavParams }
 
 interface NavState {
   screen: Screen
-  navigate: (s: Screen) => void
+  params: NavParams
+  navigate: (s: Screen, params?: NavParams) => void
   back: () => void
 }
 
@@ -31,18 +37,25 @@ const NavContext = createContext<NavState | null>(null)
 
 export function NavProvider({
   children,
-  initial = '_component-demo'
+  initial = 'home',
+  initialParams = {}
 }: {
   children: React.ReactNode
   initial?: Screen
+  initialParams?: NavParams
 }): React.JSX.Element {
-  const [history, setHistory] = useState<Screen[]>([initial])
+  const [history, setHistory] = useState<HistoryEntry[]>([{ screen: initial, params: initialParams }])
 
-  const navigate = (s: Screen): void => setHistory((h) => [...h, s])
-  const back = (): void => setHistory((h) => (h.length > 1 ? h.slice(0, -1) : h))
+  const navigate = (s: Screen, params: NavParams = {}): void =>
+    setHistory((h) => [...h, { screen: s, params }])
+
+  const back = (): void =>
+    setHistory((h) => (h.length > 1 ? h.slice(0, -1) : h))
+
+  const current = history[history.length - 1]
 
   return (
-    <NavContext.Provider value={{ screen: history[history.length - 1], navigate, back }}>
+    <NavContext.Provider value={{ screen: current.screen, params: current.params, navigate, back }}>
       {children}
     </NavContext.Provider>
   )
