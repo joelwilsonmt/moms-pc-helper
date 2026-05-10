@@ -69,7 +69,7 @@ export default function Home(): React.JSX.Element {
           variant="default"
           eyebrow="Couldn't check"
           headline="Something went wrong reading your PC"
-          sub="Joel will see this if you tap the button below."
+          sub={error}
         />
       ) : (
         <StatusCard

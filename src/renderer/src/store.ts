@@ -28,18 +28,30 @@ export const useSystemStore = create<SystemStore>((set) => ({
 
   refresh: async () => {
     set({ loading: true, error: null })
-    try {
-      const [volumes, printers, internet, backup, config] = await Promise.all([
-        window.api.system.getVolumes(),
-        window.api.system.getPrinters(),
-        window.api.system.getInternetStatus(),
-        window.api.system.getBackupStatus(),
-        window.api.app.getConfig()
-      ])
-      set({ volumes, printers, internet, backup, config, loading: false, lastChecked: new Date() })
-    } catch (e) {
-      set({ loading: false, error: String(e) })
+    const [volR, priR, netR, bakR, cfgR] = await Promise.allSettled([
+      window.api.system.getVolumes(),
+      window.api.system.getPrinters(),
+      window.api.system.getInternetStatus(),
+      window.api.system.getBackupStatus(),
+      window.api.app.getConfig()
+    ])
+
+    const errors: string[] = []
+    const ok = <T>(r: PromiseSettledResult<T>, fallback: T): T => {
+      if (r.status === 'rejected') { errors.push(String(r.reason)); return fallback }
+      return r.value
     }
+
+    set({
+      volumes:     ok(volR, []),
+      printers:    ok(priR, []),
+      internet:    ok(netR, null),
+      backup:      ok(bakR, null),
+      config:      ok(cfgR, null),
+      loading:     false,
+      lastChecked: new Date(),
+      error:       errors.length > 0 ? errors.join(' | ') : null
+    })
   }
 }))
 
