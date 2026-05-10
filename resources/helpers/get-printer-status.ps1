@@ -23,7 +23,7 @@ try {
       lastUsed  = if ($lastJob) { $lastJob.SubmittedTime.ToString('o') } else { $null }
     }
   }
-  @($printers) | ConvertTo-Json -Depth 5 -Compress
+  ConvertTo-Json -InputObject @($printers) -Depth 5 -Compress
 } catch {
   @{ error = $_.Exception.Message } | ConvertTo-Json -Compress
 }

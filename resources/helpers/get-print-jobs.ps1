@@ -19,7 +19,7 @@ try {
       }
     }
   }
-  @($jobs) | ConvertTo-Json -Depth 5 -Compress
+  ConvertTo-Json -InputObject @($jobs) -Depth 5 -Compress
 } catch {
   @{ error = $_.Exception.Message } | ConvertTo-Json -Compress
 }

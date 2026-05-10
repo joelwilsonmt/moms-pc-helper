@@ -54,7 +54,7 @@ try {
     }
   }
 
-  @($results) | ConvertTo-Json -Depth 4 -Compress
+  ConvertTo-Json -InputObject @($results) -Depth 4 -Compress
 } catch {
   @{ error = $_.Exception.Message } | ConvertTo-Json -Compress
 }

@@ -73,6 +73,27 @@ describe('PowerShell read-only enforcement', () => {
     }
   })
 
+  it('array-returning scripts use ConvertTo-Json -InputObject, not pipe', () => {
+    // Piping an array to ConvertTo-Json unwraps single-element arrays into objects.
+    // Scripts that return arrays must use: ConvertTo-Json -InputObject @($var)
+    const ARRAY_SCRIPTS = [
+      'get-volumes.ps1',
+      'get-printer-status.ps1',
+      'get-print-jobs.ps1',
+      'get-folder-sizes.ps1',
+      'get-installed-software.ps1',
+    ]
+    for (const script of ARRAY_SCRIPTS) {
+      const content = readFileSync(join(HELPERS_DIR, script), 'utf8')
+      // Flag @($var) | ConvertTo-Json and $var | ConvertTo-Json (array variable piped)
+      // but not @{ ... } | ConvertTo-Json (single hashtable literal — always safe)
+      expect(
+        content,
+        `${script} pipes to ConvertTo-Json — use -InputObject @(...) instead`
+      ).not.toMatch(/@\(\$[^)]+\)\s*\|\s*ConvertTo-Json|\$\w+\s*\|\s*ConvertTo-Json/)
+    }
+  })
+
   for (const verb of FORBIDDEN_VERBS) {
     it(`no script contains "${verb}"`, () => {
       for (const script of scripts) {

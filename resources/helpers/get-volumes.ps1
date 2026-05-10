@@ -21,7 +21,7 @@ try {
     }
   }
   # Wrap single object in array so JSON output is always an array
-  @($vols) | ConvertTo-Json -Depth 5 -Compress
+  ConvertTo-Json -InputObject @($vols) -Depth 5 -Compress
 } catch {
   @{ error = $_.Exception.Message } | ConvertTo-Json -Compress
 }

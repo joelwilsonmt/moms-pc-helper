@@ -10,7 +10,7 @@ try {
     Where-Object { $_.DisplayName -and $_.SystemComponent -ne 1 -and $_.ReleaseType -ne 'Security Update' } |
     Select-Object DisplayName, Publisher, DisplayVersion, InstallDate, EstimatedSize |
     Sort-Object DisplayName
-  @($programs | ForEach-Object {
+  $list = @($programs | ForEach-Object {
     [PSCustomObject]@{
       name            = $_.DisplayName
       publisher       = $_.Publisher
@@ -18,7 +18,8 @@ try {
       installDate     = $_.InstallDate
       estimatedSizeMB = if ($_.EstimatedSize) { [math]::Round($_.EstimatedSize / 1024, 1) } else { $null }
     }
-  }) | ConvertTo-Json -Depth 5 -Compress
+  })
+  ConvertTo-Json -InputObject $list -Depth 5 -Compress
 } catch {
   @{ error = $_.Exception.Message } | ConvertTo-Json -Compress
 }
