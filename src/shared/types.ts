@@ -192,6 +192,7 @@ export interface IpcAPI {
     completeOnboarding(): Promise<void>;
     getConfig(): Promise<AppConfig>;
     updateConfig(patch: Partial<AppConfig>): Promise<AppConfig>;
+    onNavAdvanced(callback: () => void): () => void;
   };
 }
 

@@ -3,6 +3,7 @@
 // Each channel maps to one read-only method on the adapter or a service.
 
 import { ipcMain, shell } from 'electron'
+import log from 'electron-log'
 import type { WindowsAdapter } from './adapters/WindowsAdapter'
 import { vault, VaultUnavailableError } from './services/vault'
 import { sendPanic } from './services/panic'
@@ -11,16 +12,27 @@ import * as content from './services/content'
 import * as scam from './services/scam'
 import * as appConfig from './services/appConfig'
 
+function logged<T>(channel: string, fn: () => Promise<T>): () => Promise<T> {
+  return async () => {
+    try {
+      return await fn()
+    } catch (e) {
+      log.error(`ipc ${channel} failed`, e)
+      throw e
+    }
+  }
+}
+
 export function registerIpcHandlers(adapter: WindowsAdapter): void {
   // --- system ---
-  ipcMain.handle('system:getVolumes', () => adapter.getVolumes())
-  ipcMain.handle('system:getPrinters', () => adapter.getPrinters())
-  ipcMain.handle('system:getPrintJobs', () => adapter.getPrintJobs())
-  ipcMain.handle('system:getInternetStatus', () => adapter.getInternetStatus())
-  ipcMain.handle('system:getBackupStatus', () => adapter.getBackupStatus())
-  ipcMain.handle('system:getInstalledPrograms', () => adapter.getInstalledPrograms())
-  ipcMain.handle('system:getUpdatesAvailable', () => adapter.getUpdatesAvailable())
-  ipcMain.handle('system:getFolderSizes', () => adapter.getFolderSizes())
+  ipcMain.handle('system:getVolumes',         logged('system:getVolumes',         () => adapter.getVolumes()))
+  ipcMain.handle('system:getPrinters',        logged('system:getPrinters',        () => adapter.getPrinters()))
+  ipcMain.handle('system:getPrintJobs',       logged('system:getPrintJobs',       () => adapter.getPrintJobs()))
+  ipcMain.handle('system:getInternetStatus',  logged('system:getInternetStatus',  () => adapter.getInternetStatus()))
+  ipcMain.handle('system:getBackupStatus',    logged('system:getBackupStatus',    () => adapter.getBackupStatus()))
+  ipcMain.handle('system:getInstalledPrograms', logged('system:getInstalledPrograms', () => adapter.getInstalledPrograms()))
+  ipcMain.handle('system:getUpdatesAvailable',  logged('system:getUpdatesAvailable',  () => adapter.getUpdatesAvailable()))
+  ipcMain.handle('system:getFolderSizes',     logged('system:getFolderSizes',     () => adapter.getFolderSizes()))
 
   // --- launch ---
   ipcMain.handle('launch:settings', (_e, uri: string) => {

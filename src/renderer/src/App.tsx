@@ -61,6 +61,14 @@ function Placeholder({ screen, onBack }: { screen: string; onBack: () => void })
   )
 }
 
+function NavAdvancedListener(): null {
+  const { navigate } = useNav()
+  useEffect(() => {
+    return window.api.app.onNavAdvanced(() => navigate('advanced'))
+  }, [navigate])
+  return null
+}
+
 export default function App(): React.JSX.Element {
   const [initialScreen, setInitialScreen] = useState<Screen | null>(null)
 
@@ -77,6 +85,7 @@ export default function App(): React.JSX.Element {
 
   return (
     <NavProvider initial={initialScreen}>
+      <NavAdvancedListener />
       <Router />
     </NavProvider>
   )

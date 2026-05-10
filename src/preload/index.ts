@@ -70,7 +70,12 @@ const api: IpcAPI = {
     isFirstRun: () => ipcRenderer.invoke('app:isFirstRun'),
     completeOnboarding: () => ipcRenderer.invoke('app:completeOnboarding'),
     getConfig: () => ipcRenderer.invoke('app:getConfig'),
-    updateConfig: (patch) => ipcRenderer.invoke('app:updateConfig', patch)
+    updateConfig: (patch) => ipcRenderer.invoke('app:updateConfig', patch),
+    onNavAdvanced: (cb) => {
+      const listener = (): void => cb()
+      ipcRenderer.on('nav:advanced', listener)
+      return () => ipcRenderer.off('nav:advanced', listener)
+    }
   }
 }
 
