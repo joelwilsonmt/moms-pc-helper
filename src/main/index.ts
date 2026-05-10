@@ -4,6 +4,7 @@ import log from 'electron-log'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import { registerIpcHandlers } from './ipc'
 import { MockAdapter } from './adapters/MockAdapter'
+import { RealWindowsAdapter } from './adapters/RealWindowsAdapter'
 import type { WindowsAdapter } from './adapters/WindowsAdapter'
 
 // ── Logging — writes to %APPDATA%\moms-pc-helper\logs\ on Windows ───────────
@@ -24,16 +25,10 @@ process.on('unhandledRejection', (reason) => {
 
 function createAdapter(): WindowsAdapter {
   if (process.platform === 'win32') {
-    try {
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
-      const { RealWindowsAdapter } = require('./adapters/RealWindowsAdapter')
-      log.info('Using RealWindowsAdapter')
-      return new RealWindowsAdapter()
-    } catch (e) {
-      log.error('Failed to load RealWindowsAdapter, falling back to Mock', e)
-      return new MockAdapter()
-    }
+    log.info('Using RealWindowsAdapter')
+    return new RealWindowsAdapter()
   }
+  log.info('Using MockAdapter')
   return new MockAdapter()
 }
 
