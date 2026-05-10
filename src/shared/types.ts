@@ -169,6 +169,7 @@ export interface IpcAPI {
       message: string,
       includeScreenshot: boolean
     ): Promise<{ ok: true } | { ok: false; error: string }>;
+    captureScreenshot(): Promise<string | null>; // base64 PNG
   };
   content: {
     listGuides(category?: string): Promise<Guide[]>;

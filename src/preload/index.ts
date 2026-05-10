@@ -50,7 +50,8 @@ const api: IpcAPI = {
 
   panic: {
     send: (message, includeScreenshot) =>
-      ipcRenderer.invoke('panic:send', message, includeScreenshot)
+      ipcRenderer.invoke('panic:send', message, includeScreenshot),
+    captureScreenshot: () => ipcRenderer.invoke('panic:captureScreenshot')
   },
 
   content: {

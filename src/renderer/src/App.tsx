@@ -3,12 +3,14 @@ import { NavProvider, useNav } from './nav'
 import Home from './screens/Home'
 import VaultLocked from './screens/VaultLocked'
 import VaultOpen from './screens/VaultOpen'
+import Stuck from './screens/Stuck'
 
 function Router(): React.JSX.Element {
   const { screen, back } = useNav()
 
   switch (screen) {
     case 'home':         return <Home />
+    case 'stuck':        return <Stuck />
     case 'vault-locked': return <VaultLocked />
     case 'vault-open':   return <VaultOpen />
     default:             return <Placeholder screen={screen} onBack={back} />

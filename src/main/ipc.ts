@@ -5,6 +5,8 @@
 import { ipcMain, shell } from 'electron'
 import type { WindowsAdapter } from './adapters/WindowsAdapter'
 import { vault, VaultUnavailableError } from './services/vault'
+import { sendPanic } from './services/panic'
+import { captureScreenshot } from './services/diagnostics'
 
 export function registerIpcHandlers(adapter: WindowsAdapter): void {
   // --- system ---
@@ -59,8 +61,22 @@ export function registerIpcHandlers(adapter: WindowsAdapter): void {
   ipcMain.handle('scam:analyze', () => { throw new Error('Scam shield not yet implemented') })
   ipcMain.handle('scam:history', () => [])
 
-  // --- panic (stub until milestone 7) ---
-  ipcMain.handle('panic:send', () => ({ ok: false, error: 'Panic button not yet implemented' }))
+  // --- panic ---
+  ipcMain.handle('panic:send', async (_e, message: string, includeScreenshot: boolean) => {
+    const config = defaultConfig()
+    return sendPanic(message, includeScreenshot, {
+      smtpHost:     config.smtp.host,
+      smtpPort:     config.smtp.port,
+      smtpUser:     config.smtp.user,
+      smtpPassword: config.smtp.password,
+      toEmail:      config.panicEmail,
+      fromName:     `${config.userName}'s PC Helper`
+    }, adapter)
+  })
+  ipcMain.handle('panic:captureScreenshot', async () => {
+    const buf = await captureScreenshot()
+    return buf ? buf.toString('base64') : null
+  })
 
   // --- content (stubs until milestone 9) ---
   ipcMain.handle('content:listGuides', () => [])

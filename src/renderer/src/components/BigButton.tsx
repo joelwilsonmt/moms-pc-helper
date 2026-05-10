@@ -8,6 +8,7 @@ interface BigButtonProps {
   children: React.ReactNode
   /** Stretch to full width (default true) */
   fullWidth?: boolean
+  style?: React.CSSProperties
 }
 
 export default function BigButton({
@@ -16,14 +17,15 @@ export default function BigButton({
   onClick,
   disabled,
   children,
-  fullWidth = true
+  fullWidth = true,
+  style
 }: BigButtonProps): React.JSX.Element {
   const cls = ['big-btn', variant !== 'default' ? variant : '', fullWidth ? '' : 'inline']
     .filter(Boolean)
     .join(' ')
 
   return (
-    <button className={cls} onClick={onClick} disabled={disabled} type="button">
+    <button className={cls} onClick={onClick} disabled={disabled} type="button" style={style}>
       {children}
       {meta && <span className="meta">{meta}</span>}
     </button>
