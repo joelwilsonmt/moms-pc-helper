@@ -7,6 +7,8 @@ import Stuck from './screens/Stuck'
 import DiskReport from './screens/DiskReport'
 import GuideViewer from './screens/GuideViewer'
 import ChecklistView from './screens/ChecklistView'
+import Manuals from './screens/Manuals'
+import Checklists from './screens/Checklists'
 
 function Router(): React.JSX.Element {
   const { screen, back } = useNav()
@@ -19,6 +21,8 @@ function Router(): React.JSX.Element {
     case 'disk':         return <DiskReport />
     case 'guide':        return <GuideViewer />
     case 'checklist':    return <ChecklistView />
+    case 'manuals':      return <Manuals />
+    case 'checklists':   return <Checklists />
     default:             return <Placeholder screen={screen} onBack={back} />
   }
 }

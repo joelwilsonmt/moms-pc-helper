@@ -164,6 +164,46 @@ export default function Home(): React.JSX.Element {
         />
       </div>
 
+      {/* ── Quick-access links ──────────────────────────────────────── */}
+      <div style={{ display: 'flex', gap: 10 }}>
+        <button
+          type="button"
+          onClick={() => navigate('manuals')}
+          style={{
+            flex: 1,
+            padding: '10px 14px',
+            background: 'var(--surface)',
+            border: '1.5px solid var(--border)',
+            borderRadius: 10,
+            fontSize: 14,
+            fontWeight: 600,
+            color: 'var(--ink)',
+            cursor: 'pointer',
+            textAlign: 'left'
+          }}
+        >
+          📖 Guides &amp; how-tos
+        </button>
+        <button
+          type="button"
+          onClick={() => navigate('checklists')}
+          style={{
+            flex: 1,
+            padding: '10px 14px',
+            background: 'var(--surface)',
+            border: '1.5px solid var(--border)',
+            borderRadius: 10,
+            fontSize: 14,
+            fontWeight: 600,
+            color: 'var(--ink)',
+            cursor: 'pointer',
+            textAlign: 'left'
+          }}
+        >
+          ✅ Checklists
+        </button>
+      </div>
+
       {/* ── Last-checked footnote ────────────────────────────────────── */}
       {lastChecked && !loading && (
         <div
