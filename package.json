@@ -1,6 +1,6 @@
 {
   "name": "moms-pc-helper",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Mom's PC Helper — read-only PC health monitor for Jan",
   "author": "Joel Wilson <joel.wilson.mt@gmail.com>",
   "main": "./out/main/index.js",
@@ -27,11 +27,9 @@
       "out/**/*"
     ],
     "extraResources": [
-      {
-        "from": "resources",
-        "to": "resources",
-        "filter": ["**/*"]
-      }
+      { "from": "resources/helpers",    "to": "helpers" },
+      { "from": "resources/guides",     "to": "guides" },
+      { "from": "resources/checklists", "to": "checklists" }
     ],
     "win": {
       "target": [
