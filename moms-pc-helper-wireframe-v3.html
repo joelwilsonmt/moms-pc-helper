@@ -1,0 +1,1180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Mom's PC Helper — Wireframe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --canvas: #f4f0e8;
+    --canvas-2: #ebe5d8;
+    --ink: #221f1a;
+    --ink-2: #4a463d;
+    --muted: #8a8478;
+    --line: #c9c2b2;
+    --paper: #fbf8f1;
+    --accent: #c25450;
+    --accent-soft: #f1d6d4;
+    --good: #5a7a4f;
+    --good-soft: #d8e3d2;
+    --warn: #d4a23b;
+    --warn-soft: #f3e4c0;
+    --bad: #b13a32;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background: var(--canvas);
+    color: var(--ink);
+    font-family: 'Nunito', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.5;
+  }
+  .page { max-width: 1280px; margin: 0 auto; padding: 24px 20px 80px; }
+  .header {
+    display: flex; flex-direction: column; gap: 8px;
+    border-bottom: 1px dashed var(--line);
+    padding-bottom: 20px; margin-bottom: 24px;
+  }
+  .eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--muted);
+  }
+  h1 { font-size: clamp(28px, 4vw, 40px); font-weight: 800; letter-spacing: -0.02em; }
+  .sub { color: var(--ink-2); max-width: 60ch; font-size: 15px; }
+  .tabs {
+    display: flex; flex-wrap: wrap; gap: 8px;
+    margin-bottom: 24px;
+  }
+  .tab {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px; padding: 8px 14px;
+    border: 1px solid var(--line); border-radius: 999px;
+    background: var(--paper); color: var(--ink-2);
+    cursor: pointer; transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .tab:hover { border-color: var(--ink-2); }
+  .tab.active {
+    background: var(--ink); color: var(--paper); border-color: var(--ink);
+  }
+  .tab .num {
+    color: var(--muted); margin-right: 6px;
+  }
+  .tab.active .num { color: rgba(255,255,255,0.5); }
+
+  .layout {
+    display: grid; gap: 24px;
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 980px) {
+    .layout { grid-template-columns: minmax(0,1fr) 320px; }
+  }
+
+  /* PC frame */
+  .frame-wrap {
+    background: var(--canvas-2);
+    border-radius: 16px;
+    padding: 18px;
+    border: 1px dashed var(--line);
+  }
+  .frame-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; color: var(--muted);
+    letter-spacing: 0.1em; text-transform: uppercase;
+    margin-bottom: 10px;
+    display: flex; justify-content: space-between; align-items: baseline;
+  }
+  .frame {
+    background: var(--paper);
+    border: 1px solid var(--ink);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 6px 6px 0 0 var(--canvas-2);
+  }
+  .titlebar {
+    display: flex; align-items: center; gap: 10px;
+    background: #efe9da; padding: 10px 14px;
+    border-bottom: 1px solid var(--line);
+  }
+  .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--line); }
+  .dot.r { background: #e08a86; } .dot.y { background: #d8be6c; } .dot.g { background: #94b389; }
+  .titlebar .title {
+    font-size: 12px; font-weight: 700; color: var(--ink-2);
+    margin-left: 4px;
+  }
+  .screen {
+    padding: 28px 28px 32px;
+    min-height: 520px;
+    display: flex; flex-direction: column; gap: 18px;
+  }
+
+  /* Common app components */
+  .greeting {
+    font-size: 14px; color: var(--muted);
+    font-weight: 600;
+  }
+  .greeting strong { color: var(--ink); font-weight: 800; }
+
+  .status-card {
+    background: linear-gradient(180deg, var(--accent-soft), #f8e0de);
+    border: 2px solid var(--accent);
+    border-radius: 14px;
+    padding: 22px 22px 20px;
+  }
+  .status-card.good { background: linear-gradient(180deg, var(--good-soft), #e3edda); border-color: var(--good); }
+  .status-card.warn { background: linear-gradient(180deg, var(--warn-soft), #f5e8c8); border-color: var(--warn); }
+  .status-eyebrow {
+    font-size: 12px; font-weight: 800;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+  .status-card.good .status-eyebrow { color: var(--good); }
+  .status-card.warn .status-eyebrow { color: #8a6c1d; }
+  .status-headline { font-size: 22px; font-weight: 800; line-height: 1.2; margin-bottom: 4px; }
+  .status-sub { color: var(--ink-2); font-size: 15px; margin-bottom: 16px; }
+
+  .big-btn {
+    display: block; width: 100%;
+    background: var(--ink); color: var(--paper);
+    border: none; border-radius: 10px;
+    padding: 18px 20px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 18px; font-weight: 800;
+    cursor: pointer; text-align: left;
+  }
+  .big-btn .meta { display: block; font-size: 13px; font-weight: 600; opacity: 0.7; margin-top: 4px; }
+  .big-btn.accent { background: var(--accent); }
+  .big-btn.good { background: var(--good); }
+  .big-btn.danger { background: var(--bad); }
+
+  .grid-cards {
+    display: grid; gap: 12px;
+    grid-template-columns: repeat(2, minmax(0,1fr));
+  }
+  .card {
+    background: var(--paper);
+    border: 1.5px solid var(--line);
+    border-radius: 10px;
+    padding: 16px;
+    cursor: pointer;
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .card .icon {
+    width: 36px; height: 36px;
+    background: var(--canvas-2); border-radius: 8px;
+    display: grid; place-items: center;
+    font-size: 18px;
+    margin-bottom: 6px;
+  }
+  .card .title-row { display: flex; justify-content: space-between; align-items: baseline; }
+  .card .name { font-weight: 800; font-size: 15px; }
+  .card .desc { font-size: 13px; color: var(--ink-2); }
+  .card .pill {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; padding: 2px 6px; border-radius: 4px;
+    background: var(--canvas-2); color: var(--ink-2);
+  }
+  .pill.good { background: var(--good-soft); color: #3f5a37; }
+  .pill.warn { background: var(--warn-soft); color: #8a6c1d; }
+  .pill.bad { background: var(--accent-soft); color: var(--accent); }
+
+  .stuck-bar {
+    margin-top: auto;
+    background: var(--bad); color: var(--paper);
+    border-radius: 12px; padding: 16px 18px;
+    display: flex; justify-content: space-between; align-items: center;
+    cursor: pointer;
+    border: none;
+    font-family: inherit;
+    width: 100%;
+  }
+  .stuck-bar .label { font-weight: 800; font-size: 16px; }
+  .stuck-bar .hint { font-size: 12px; opacity: 0.85; }
+  .stuck-bar .arrow { font-size: 22px; }
+
+  /* Disk bar */
+  .disk-row { display: flex; flex-direction: column; gap: 10px; }
+  .disk { background: var(--paper); border: 1.5px solid var(--line); border-radius: 10px; padding: 14px; }
+  .disk-head { display: flex; justify-content: space-between; font-size: 14px; font-weight: 700; margin-bottom: 6px; }
+  .disk-head .free { color: var(--muted); font-weight: 600; }
+  .bar { height: 14px; background: var(--canvas-2); border-radius: 7px; overflow: hidden; }
+  .bar > span { display: block; height: 100%; }
+  .bar .used { background: var(--accent); }
+  .bar .used-good { background: var(--good); }
+  .bar .preview { background: repeating-linear-gradient(45deg, var(--good) 0 6px, #6a8a5d 6px 12px); }
+
+  .confirm-list {
+    background: var(--paper);
+    border: 1.5px solid var(--line);
+    border-radius: 10px;
+    padding: 4px 0;
+  }
+  .confirm-row {
+    display: flex; gap: 12px; padding: 12px 16px;
+    border-bottom: 1px solid var(--canvas-2);
+    align-items: flex-start;
+  }
+  .confirm-row:last-child { border-bottom: none; }
+  .check { color: var(--good); font-weight: 800; flex-shrink: 0; }
+  .confirm-row .what { font-weight: 700; font-size: 14px; }
+  .confirm-row .det { font-size: 13px; color: var(--ink-2); }
+
+  /* Modal overlay */
+  .modal-shade {
+    position: relative;
+    background: var(--paper);
+    border-radius: 8px;
+    overflow: hidden;
+    min-height: 520px;
+  }
+  .behind {
+    filter: blur(2px) brightness(0.95);
+    opacity: 0.6;
+    padding: 28px;
+  }
+  .modal {
+    position: absolute; inset: auto 0 0 0;
+    margin: auto;
+    top: 50%; left: 50%; transform: translate(-50%, -50%);
+    width: calc(100% - 48px); max-width: 460px;
+    background: var(--paper); border: 2px solid var(--ink);
+    border-radius: 14px; padding: 24px;
+    box-shadow: 6px 6px 0 0 var(--canvas-2);
+  }
+  .modal h3 { font-size: 22px; font-weight: 800; margin-bottom: 4px; }
+  .modal p { color: var(--ink-2); margin-bottom: 14px; font-size: 15px; }
+  .modal .cancel { display: block; text-align: center; margin-top: 12px; color: var(--muted); font-size: 14px; cursor: pointer; }
+
+  /* Stuck screen */
+  .textarea {
+    background: var(--paper); border: 1.5px dashed var(--line);
+    border-radius: 12px; padding: 20px;
+    min-height: 130px; color: var(--muted); font-style: italic;
+  }
+  .stuck-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .stuck-action {
+    background: var(--paper); border: 1.5px solid var(--line);
+    border-radius: 10px; padding: 14px; text-align: center;
+    font-weight: 700; font-size: 14px;
+    cursor: pointer;
+  }
+  .stuck-action .ico { font-size: 22px; display: block; margin-bottom: 4px; }
+
+  /* Vault */
+  .vault-locked { display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 40px 0; }
+  .lock-circle {
+    width: 100px; height: 100px;
+    border: 2px solid var(--ink); border-radius: 50%;
+    display: grid; place-items: center; font-size: 38px;
+    background: var(--paper);
+  }
+  .vault-search {
+    background: var(--paper); border: 1.5px solid var(--line);
+    border-radius: 10px; padding: 14px 18px;
+    font-size: 15px; color: var(--muted);
+  }
+  .vault-cats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .cat {
+    background: var(--paper); border: 1.5px solid var(--line);
+    border-radius: 10px; padding: 12px; text-align: center;
+    font-size: 13px; font-weight: 700;
+  }
+  .cat .ico { display: block; font-size: 22px; margin-bottom: 4px; }
+  .vault-entries .entry {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 12px 14px; background: var(--paper);
+    border: 1.5px solid var(--line); border-radius: 10px;
+    margin-bottom: 8px;
+  }
+  .entry .name { font-weight: 700; font-size: 14px; }
+  .entry .det { font-size: 12px; color: var(--muted); font-family: 'JetBrains Mono', monospace; }
+
+  /* Scam */
+  .drop-zone {
+    background: var(--paper); border: 2px dashed var(--line);
+    border-radius: 14px; padding: 36px 20px;
+    text-align: center;
+  }
+  .drop-zone .big { font-weight: 800; font-size: 18px; margin-bottom: 4px; }
+  .drop-zone .small { color: var(--muted); font-size: 13px; }
+  .verdict {
+    border-radius: 12px; padding: 16px 18px;
+    background: var(--accent-soft); border: 2px solid var(--accent);
+  }
+  .verdict.good { background: var(--good-soft); border-color: var(--good); }
+  .verdict .head { font-weight: 800; margin-bottom: 4px; font-size: 16px; }
+  .verdict .body { font-size: 14px; color: var(--ink-2); }
+
+  /* Internet */
+  .diag-list { display: flex; flex-direction: column; gap: 8px; }
+  .diag {
+    display: flex; gap: 12px; align-items: center;
+    background: var(--paper); border: 1.5px solid var(--line);
+    border-radius: 10px; padding: 12px 14px;
+  }
+  .diag .stat { font-weight: 800; font-size: 14px; flex-shrink: 0; width: 24px; text-align: center; }
+  .diag .stat.ok { color: var(--good); } .diag .stat.no { color: var(--bad); }
+  .diag .lbl { font-weight: 700; font-size: 14px; flex: 1; }
+  .diag .det { font-size: 12px; color: var(--muted); font-family: 'JetBrains Mono', monospace; }
+
+  /* Annotations sidebar */
+  .annotations {
+    background: var(--canvas-2);
+    border: 1px dashed var(--line);
+    border-radius: 16px;
+    padding: 20px;
+    height: fit-content;
+    position: sticky;
+    top: 20px;
+  }
+  .anno-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 10px;
+  }
+  .anno-title { font-size: 18px; font-weight: 800; margin-bottom: 14px; }
+  .anno { margin-bottom: 14px; padding-left: 14px; border-left: 2px solid var(--accent); }
+  .anno .what { font-weight: 800; font-size: 13px; margin-bottom: 2px; }
+  .anno .why { font-size: 13px; color: var(--ink-2); }
+  .anno-tech {
+    margin-top: 18px; padding: 12px;
+    background: var(--paper); border: 1px solid var(--line); border-radius: 8px;
+    font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    color: var(--ink-2); line-height: 1.6;
+  }
+  .anno-tech b { color: var(--ink); }
+
+  .footer {
+    margin-top: 40px; padding-top: 20px; border-top: 1px dashed var(--line);
+    font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    color: var(--muted); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px;
+  }
+  .hide { display: none !important; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="header">
+    <span class="eyebrow">Wireframe · v1 + v2 scope · Windows-direct</span>
+    <h1>Mom's PC Helper</h1>
+    <p class="sub">Eight key screens. Big buttons, plain language, always-confirm. Click a tab to see each flow with annotations explaining the design choices.</p>
+  </div>
+
+  <div class="tabs" id="tabs">
+    <button class="tab active" data-screen="home"><span class="num">01</span>Home</button>
+    <button class="tab" data-screen="cleanup"><span class="num">02</span>Disk Report</button>
+    <button class="tab" data-screen="stuck"><span class="num">03</span>I'm Stuck</button>
+    <button class="tab" data-screen="vault-lock"><span class="num">04</span>Vault (Locked)</button>
+    <button class="tab" data-screen="vault-open"><span class="num">05</span>Vault (Open)</button>
+    <button class="tab" data-screen="scam"><span class="num">06</span>Scam Shield</button>
+    <button class="tab" data-screen="internet"><span class="num">07</span>Internet</button>
+    <button class="tab" data-screen="backup"><span class="num">08</span>Backup</button>
+    <button class="tab" data-screen="subs"><span class="num">09</span>Subscriptions</button>
+    <button class="tab" data-screen="print"><span class="num">10</span>Print Queue</button>
+    <button class="tab" data-screen="updates"><span class="num">11</span>Updates</button>
+    <button class="tab" data-screen="manuals"><span class="num">12</span>Manuals &amp; Guides</button>
+    <button class="tab" data-screen="checklists"><span class="num">13</span>Checklists</button>
+    <button class="tab" data-screen="onboard"><span class="num">14</span>First Run</button>
+    <button class="tab" data-screen="settings"><span class="num">15</span>Advanced</button>
+  </div>
+
+  <div class="layout">
+    <!-- WIREFRAME COLUMN -->
+    <div class="frame-wrap">
+      <div class="frame-label">
+        <span id="screen-label">01 — Home Screen</span>
+        <span>1280 × 800 · Electron window</span>
+      </div>
+      <div class="frame">
+        <div class="titlebar">
+          <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+          <span class="title">Mom's PC Helper</span>
+        </div>
+
+        <!-- HOME -->
+        <div class="screen" data-screen="home">
+          <div class="greeting">Good morning, <strong>Donna</strong></div>
+
+          <div class="status-card warn">
+            <div class="status-eyebrow">Needs your attention</div>
+            <div class="status-headline">Your main drive is 92% full</div>
+            <div class="status-sub">Let's move some photos to your big drive — there's plenty of room over there.</div>
+            <button class="big-btn">
+              Show me how to free up space
+              <span class="meta">A guided walkthrough · about 10 minutes</span>
+            </button>
+          </div>
+
+          <div class="grid-cards">
+            <div class="card">
+              <div class="icon">📷</div>
+              <div class="title-row"><span class="name">New photos on phone</span><span class="pill">312</span></div>
+              <span class="desc">Tap to import them</span>
+            </div>
+            <div class="card">
+              <div class="icon">🖨️</div>
+              <div class="title-row"><span class="name">Brother printer</span><span class="pill good">Ready</span></div>
+              <span class="desc">Last used 3 days ago</span>
+            </div>
+            <div class="card">
+              <div class="icon">📡</div>
+              <div class="title-row"><span class="name">Internet</span><span class="pill good">Working</span></div>
+              <span class="desc">Speed looks good</span>
+            </div>
+            <div class="card">
+              <div class="icon">🔒</div>
+              <div class="title-row"><span class="name">Backup</span><span class="pill warn">2 days ago</span></div>
+              <span class="desc">Photos & documents safe</span>
+            </div>
+          </div>
+
+          <button class="stuck-bar">
+            <span>
+              <span class="label">Something's wrong — tell Joel</span><br>
+              <span class="hint">Sends Joel a message with what's happening on your computer</span>
+            </span>
+            <span class="arrow">→</span>
+          </button>
+        </div>
+
+        <!-- CLEANUP -->
+        <div class="screen hide" data-screen="cleanup">
+          <div class="greeting">← Back to home</div>
+          <h2 style="font-size: 24px; font-weight: 800;">Where your space is going</h2>
+          <p style="color: var(--ink-2); font-size: 15px;">Here's what I noticed on your main drive. Tap any one to see how to move it to your big drive yourself — I'll walk you through it step by step.</p>
+
+          <div class="disk-row">
+            <div class="disk">
+              <div class="disk-head"><span>Main drive (where Windows lives)</span><span class="free">19 GB free of 256 GB</span></div>
+              <div class="bar"><span class="used" style="width: 92%"></span></div>
+            </div>
+            <div class="disk">
+              <div class="disk-head"><span>Big drive (where things should go)</span><span class="free">812 GB free of 1 TB</span></div>
+              <div class="bar"><span class="used-good" style="width: 19%"></span></div>
+            </div>
+          </div>
+
+          <div class="confirm-list">
+            <div class="confirm-row">
+              <span class="check">→</span>
+              <div style="flex:1;">
+                <div class="what">Pictures · 47 GB · 1,247 photos</div>
+                <div class="det">Move to big drive. Quick Access still works.</div>
+              </div>
+              <span class="pill bad">92%</span>
+            </div>
+            <div class="confirm-row">
+              <span class="check">→</span>
+              <div style="flex:1;">
+                <div class="what">Downloads · 18 GB · old installers</div>
+                <div class="det">Most of these haven't been opened in 6+ months.</div>
+              </div>
+            </div>
+            <div class="confirm-row">
+              <span class="check">→</span>
+              <div style="flex:1;">
+                <div class="what">Recycle bin & temp files · 6 GB</div>
+                <div class="det">Safe to delete.</div>
+              </div>
+            </div>
+            <div class="confirm-row">
+              <span class="check">→</span>
+              <div style="flex:1;">
+                <div class="what">OneDrive cache on main drive · 12 GB</div>
+                <div class="det">Move OneDrive folder to big drive.</div>
+              </div>
+            </div>
+          </div>
+
+          <button class="big-btn accent">Walk me through freeing up 83 GB</button>
+        </div>
+
+        <!-- STUCK -->
+        <div class="screen hide" data-screen="stuck">
+          <div class="greeting">← Back to home</div>
+          <h2 style="font-size: 26px; font-weight: 800;">What's not working?</h2>
+          <p style="color: var(--ink-2); font-size: 15px;">Tell me in your own words. Joel will get a message with the details.</p>
+
+          <div class="textarea">The printer is making a weird noise and won't print my doctor's paperwork...</div>
+
+          <div class="stuck-actions">
+            <div class="stuck-action"><span class="ico">🎤</span>Tap to speak instead</div>
+            <div class="stuck-action"><span class="ico">📸</span>Add a screenshot</div>
+          </div>
+
+          <div style="background: var(--paper); border: 1.5px solid var(--line); border-radius: 10px; padding: 14px;">
+            <div style="font-size: 12px; font-weight: 700; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 8px;">I'll also send Joel:</div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 13px; color: var(--ink-2);">
+              <div>✓ Disk space</div>
+              <div>✓ What changed today</div>
+              <div>✓ Recent error messages</div>
+              <div>✓ Printer status</div>
+            </div>
+          </div>
+
+          <button class="big-btn danger" style="margin-top: auto;">Send to Joel</button>
+        </div>
+
+        <!-- VAULT LOCKED -->
+        <div class="screen hide" data-screen="vault-lock">
+          <div class="greeting">Find My Stuff</div>
+          <div class="vault-locked">
+            <div class="lock-circle">🔒</div>
+            <h2 style="font-size: 22px; font-weight: 800; text-align: center;">Your vault is locked</h2>
+            <p style="color: var(--ink-2); text-align: center; max-width: 320px; font-size: 15px;">Wi-Fi passwords, account info, the camper's title location, and other things you wanted to remember.</p>
+            <button class="big-btn" style="max-width: 320px;">
+              <span style="display: flex; align-items: center; gap: 10px; justify-content: center;">
+                <span style="font-size: 22px;">👆</span>
+                Use Windows Hello
+              </span>
+            </button>
+            <span class="cancel" style="color: var(--muted); font-size: 14px;">Or type my password</span>
+          </div>
+        </div>
+
+        <!-- VAULT OPEN -->
+        <div class="screen hide" data-screen="vault-open">
+          <div class="greeting">Find My Stuff <span style="float: right; color: var(--good);">🔓 Unlocked</span></div>
+          <div class="vault-search">🔍 Search your stuff…</div>
+          <div class="vault-cats">
+            <div class="cat"><span class="ico">📡</span>Wi-Fi</div>
+            <div class="cat"><span class="ico">🔑</span>Accounts</div>
+            <div class="cat"><span class="ico">📄</span>Documents</div>
+            <div class="cat"><span class="ico">🚐</span>Camper</div>
+            <div class="cat"><span class="ico">🚗</span>Subaru</div>
+            <div class="cat"><span class="ico">🐾</span>Vet & Pets</div>
+          </div>
+          <div class="vault-entries">
+            <div style="font-size: 12px; font-weight: 700; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin: 8px 0;">Recently viewed</div>
+            <div class="entry"><div><div class="name">Home Wi-Fi password</div><div class="det">Updated 3 weeks ago</div></div><span style="font-size: 18px;">›</span></div>
+            <div class="entry"><div><div class="name">Camper title — top drawer of filing cabinet</div><div class="det">Photo attached</div></div><span style="font-size: 18px;">›</span></div>
+            <div class="entry"><div><div class="name">Garage door code</div><div class="det">Updated 6 months ago</div></div><span style="font-size: 18px;">›</span></div>
+            <div class="entry"><div><div class="name">Dr. Patel — patient ID</div><div class="det">Phone, address, portal login</div></div><span style="font-size: 18px;">›</span></div>
+          </div>
+          <button class="big-btn" style="background: var(--paper); color: var(--ink); border: 1.5px dashed var(--line);">+ Add something to remember</button>
+        </div>
+
+        <!-- SCAM -->
+        <div class="screen hide" data-screen="scam">
+          <div class="greeting">← Back to home</div>
+          <h2 style="font-size: 26px; font-weight: 800;">Is this a scam?</h2>
+          <p style="color: var(--ink-2); font-size: 15px;">Drop in anything that looks suspicious — an email, a text, a phone number, a link. I'll check.</p>
+
+          <div class="drop-zone">
+            <div style="font-size: 32px; margin-bottom: 8px;">⬇️</div>
+            <div class="big">Drop email or paste anything here</div>
+            <div class="small">Works with text, links, phone numbers, or saved emails (.eml)</div>
+          </div>
+
+          <div style="font-size: 12px; font-weight: 700; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase;">Last check</div>
+
+          <div class="verdict">
+            <div class="head">⚠️ This looks like a scam</div>
+            <div class="body">It's a known UPS delivery phishing pattern. The link goes to a fake site, not ups.com. <strong>Don't click it</strong>, and don't reply. You can safely delete the message.</div>
+          </div>
+
+          <div style="background: var(--paper); border: 1.5px solid var(--line); border-radius: 10px; padding: 14px; font-size: 13px; color: var(--ink-2);">
+            <strong style="color: var(--ink);">Tip:</strong> You can also forward suspicious emails from your phone to <code style="font-family: 'JetBrains Mono', monospace; background: var(--canvas-2); padding: 2px 6px; border-radius: 4px;">scam-check@joel-and-mom.com</code> and they'll show up here.
+          </div>
+        </div>
+
+        <!-- INTERNET -->
+        <div class="screen hide" data-screen="internet">
+          <div class="greeting">← Back to home</div>
+
+          <div class="status-card">
+            <div class="status-eyebrow">Internet is down</div>
+            <div class="status-headline">I checked everything — your router needs a restart</div>
+            <div class="status-sub">This happens sometimes. I can fix it in about 90 seconds.</div>
+          </div>
+
+          <div style="font-size: 12px; font-weight: 700; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase;">What I found</div>
+
+          <div class="diag-list">
+            <div class="diag"><span class="stat ok">✓</span><span class="lbl">Your computer</span><span class="det">Working</span></div>
+            <div class="diag"><span class="stat ok">✓</span><span class="lbl">Modem</span><span class="det">Reachable</span></div>
+            <div class="diag"><span class="stat no">✗</span><span class="lbl">Router</span><span class="det">Not responding</span></div>
+            <div class="diag"><span class="stat no">✗</span><span class="lbl">Internet</span><span class="det">No signal out</span></div>
+          </div>
+
+          <button class="big-btn accent">Show me how to restart my router</button>
+          <p style="font-size: 13px; color: var(--ink-2); text-align: center;">Three simple steps · takes about 90 seconds</p>
+        </div>
+
+        <!-- BACKUP -->
+        <div class="screen hide" data-screen="backup">
+          <div class="greeting">← Back to home</div>
+
+          <div class="status-card warn">
+            <div class="status-eyebrow">Mostly safe</div>
+            <div class="status-headline">Photos and documents are backed up</div>
+            <div class="status-sub">Last backup was 2 days ago. A couple of things still aren't being backed up — let's fix that.</div>
+          </div>
+
+          <div style="font-size: 12px; font-weight: 700; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase;">What's protected</div>
+
+          <div class="confirm-list">
+            <div class="confirm-row">
+              <span class="check">✓</span>
+              <div style="flex:1;">
+                <div class="what">Photos · 47 GB</div>
+                <div class="det">Big drive + Backblaze · 2 days ago</div>
+              </div>
+              <span class="pill good">Safe</span>
+            </div>
+            <div class="confirm-row">
+              <span class="check">✓</span>
+              <div style="flex:1;">
+                <div class="what">Documents · 3 GB</div>
+                <div class="det">Big drive + Backblaze · 2 days ago</div>
+              </div>
+              <span class="pill good">Safe</span>
+            </div>
+            <div class="confirm-row">
+              <span class="check" style="color: var(--warn);">!</span>
+              <div style="flex:1;">
+                <div class="what">Camper photos on phone · ~8 GB</div>
+                <div class="det">Phone hasn't been imported in 2 months</div>
+              </div>
+              <span class="pill warn">Behind</span>
+            </div>
+            <div class="confirm-row">
+              <span class="check" style="color: var(--bad);">✗</span>
+              <div style="flex:1;">
+                <div class="what">Email</div>
+                <div class="det">Not being backed up yet</div>
+              </div>
+              <span class="pill bad">Off</span>
+            </div>
+          </div>
+
+          <button class="big-btn good">Show me how to back up</button>
+          <span style="text-align: center; color: var(--muted); font-size: 13px;">Walk through setting up Windows Backup</span>
+        </div>
+
+        <!-- SUBSCRIPTIONS -->
+        <div class="screen hide" data-screen="subs">
+          <div class="greeting">← Back to home</div>
+
+          <div class="status-card">
+            <div class="status-eyebrow">Monthly total</div>
+            <div class="status-headline">$127.43 / month</div>
+            <div class="status-sub">$1,529 a year. Two of these overlap — you might not need both.</div>
+          </div>
+
+          <div class="confirm-list">
+            <div class="confirm-row">
+              <div style="width: 36px; height: 36px; background: var(--canvas-2); border-radius: 8px; display: grid; place-items: center; font-size: 18px;">📺</div>
+              <div style="flex:1;">
+                <div class="what">Netflix · $15.49 / mo</div>
+                <div class="det">Renews in 12 days</div>
+              </div>
+            </div>
+            <div class="confirm-row">
+              <div style="width: 36px; height: 36px; background: var(--accent-soft); border-radius: 8px; display: grid; place-items: center; font-size: 18px;">📺</div>
+              <div style="flex:1;">
+                <div class="what">Hulu · $17.99 / mo</div>
+                <div class="det">Renews in 4 days · <strong style="color: var(--accent);">Overlaps with Netflix</strong></div>
+              </div>
+              <span class="pill bad">Review</span>
+            </div>
+            <div class="confirm-row">
+              <div style="width: 36px; height: 36px; background: var(--canvas-2); border-radius: 8px; display: grid; place-items: center; font-size: 18px;">📦</div>
+              <div style="flex:1;">
+                <div class="what">Amazon Prime · $14.99 / mo</div>
+                <div class="det">Renews in 18 days</div>
+              </div>
+            </div>
+            <div class="confirm-row">
+              <div style="width: 36px; height: 36px; background: var(--accent-soft); border-radius: 8px; display: grid; place-items: center; font-size: 18px;">🛡️</div>
+              <div style="flex:1;">
+                <div class="what">McAfee Antivirus · $89.99 / yr</div>
+                <div class="det">Renews in 2 weeks · <strong style="color: var(--accent);">Windows Defender already protects you</strong></div>
+              </div>
+              <span class="pill bad">Cancel?</span>
+            </div>
+            <div class="confirm-row">
+              <div style="width: 36px; height: 36px; background: var(--canvas-2); border-radius: 8px; display: grid; place-items: center; font-size: 18px;">🎵</div>
+              <div style="flex:1;">
+                <div class="what">Spotify · $10.99 / mo</div>
+                <div class="det">Renews in 23 days</div>
+              </div>
+            </div>
+          </div>
+
+          <button class="big-btn" style="background: var(--paper); color: var(--ink); border: 1.5px dashed var(--line);">+ Add a subscription I forgot</button>
+        </div>
+
+        <!-- PRINT QUEUE -->
+        <div class="screen hide" data-screen="print">
+          <div class="greeting">← Back to home</div>
+
+          <div class="status-card">
+            <div class="status-eyebrow">Brother HL-L2350DW</div>
+            <div class="status-headline">3 documents are stuck</div>
+            <div class="status-sub">This usually fixes itself when I clear them and restart the printer. Takes about 20 seconds.</div>
+          </div>
+
+          <div style="font-size: 12px; font-weight: 700; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase;">Stuck right now</div>
+
+          <div class="confirm-list">
+            <div class="confirm-row">
+              <span class="check" style="color: var(--bad);">✗</span>
+              <div style="flex:1;">
+                <div class="what">doctor-paperwork.pdf · 4 pages</div>
+                <div class="det">Stuck for 23 minutes · spooler error</div>
+              </div>
+            </div>
+            <div class="confirm-row">
+              <span class="check" style="color: var(--bad);">✗</span>
+              <div style="flex:1;">
+                <div class="what">recipe.pdf · 1 page</div>
+                <div class="det">Stuck for 23 minutes</div>
+              </div>
+            </div>
+            <div class="confirm-row">
+              <span class="check" style="color: var(--bad);">✗</span>
+              <div style="flex:1;">
+                <div class="what">Tax form W-9 · 8 pages</div>
+                <div class="det">Stuck for 28 minutes</div>
+              </div>
+            </div>
+          </div>
+
+          <button class="big-btn accent">Show me how to fix this</button>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <div class="stuck-action"><span class="ico">📄</span>How to print a test page</div>
+            <div class="stuck-action"><span class="ico">↻</span>How to re-add the printer</div>
+          </div>
+        </div>
+
+        <!-- UPDATES -->
+        <div class="screen hide" data-screen="updates">
+          <div class="greeting">← Back to home</div>
+          <h2 style="font-size: 26px; font-weight: 800;">5 updates ready</h2>
+          <p style="color: var(--ink-2); font-size: 15px;">About 12 minutes total. Your computer keeps working while these install.</p>
+
+          <div class="confirm-list">
+            <div class="confirm-row">
+              <div style="width: 36px; height: 36px; background: var(--canvas-2); border-radius: 8px; display: grid; place-items: center; font-size: 18px;">🪟</div>
+              <div style="flex:1;">
+                <div class="what">Windows · 2 updates</div>
+                <div class="det">Security fixes · 4 minutes · restart needed</div>
+              </div>
+              <span class="pill warn">Restart</span>
+            </div>
+            <div class="confirm-row">
+              <div style="width: 36px; height: 36px; background: var(--canvas-2); border-radius: 8px; display: grid; place-items: center; font-size: 18px;">🌐</div>
+              <div style="flex:1;">
+                <div class="what">Chrome · version 142</div>
+                <div class="det">Security &amp; speed · 2 minutes</div>
+              </div>
+            </div>
+            <div class="confirm-row">
+              <div style="width: 36px; height: 36px; background: var(--canvas-2); border-radius: 8px; display: grid; place-items: center; font-size: 18px;">📝</div>
+              <div style="flex:1;">
+                <div class="what">Microsoft Office · maintenance</div>
+                <div class="det">Bug fixes · 3 minutes</div>
+              </div>
+            </div>
+            <div class="confirm-row">
+              <div style="width: 36px; height: 36px; background: var(--canvas-2); border-radius: 8px; display: grid; place-items: center; font-size: 18px;">📞</div>
+              <div style="flex:1;">
+                <div class="what">Zoom · version 6.2</div>
+                <div class="det">Better video quality · 2 minutes</div>
+              </div>
+            </div>
+          </div>
+
+          <button class="big-btn good">Open Windows Update</button>
+          <span style="text-align: center; color: var(--muted); font-size: 13px;">Windows will install these for you</span>
+        </div>
+
+        <!-- ONBOARD -->
+        <div class="screen hide" data-screen="onboard">
+          <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1; gap: 16px; padding: 12px 0;">
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted);">Step 1 of 4</div>
+
+            <div style="font-size: 36px; font-weight: 900; text-align: center; max-width: 18ch; line-height: 1.1;">Hi Donna, I'm here to help.</div>
+
+            <p style="color: var(--ink-2); text-align: center; max-width: 42ch; font-size: 16px;">Joel set me up to spot problems and walk you through fixing them. I never change anything on your computer myself — I just point things out.</p>
+
+            <div style="background: var(--paper); border: 1.5px solid var(--line); border-radius: 12px; padding: 18px; width: 100%; max-width: 480px; margin-top: 4px;">
+              <div style="font-size: 12px; font-weight: 700; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 10px;">A few things I already noticed</div>
+              <div style="display: flex; gap: 10px; align-items: flex-start; margin-bottom: 8px;">
+                <span style="color: var(--accent); font-weight: 800;">→</span>
+                <div style="font-size: 14px;"><strong>Your main drive is 92% full</strong>, but your big drive has 812 GB free.</div>
+              </div>
+              <div style="display: flex; gap: 10px; align-items: flex-start; margin-bottom: 8px;">
+                <span style="color: var(--accent); font-weight: 800;">→</span>
+                <div style="font-size: 14px;">3 print jobs are stuck on your Brother printer.</div>
+              </div>
+              <div style="display: flex; gap: 10px; align-items: flex-start;">
+                <span style="color: var(--accent); font-weight: 800;">→</span>
+                <div style="font-size: 14px;">Your phone has 312 photos that haven't been imported.</div>
+              </div>
+            </div>
+
+            <button class="big-btn good" style="max-width: 480px;">Sounds good — let's start</button>
+            <span style="color: var(--muted); font-size: 14px;">Skip for now</span>
+          </div>
+        </div>
+
+        <!-- MANUALS & GUIDES -->
+        <div class="screen hide" data-screen="manuals">
+          <div class="greeting">← Back to home</div>
+          <h2 style="font-size: 26px; font-weight: 800;">Manuals &amp; how-to guides</h2>
+          <p style="color: var(--ink-2); font-size: 15px;">Everything Joel collected for the things you use. Works without internet — handy in the camper.</p>
+
+          <div class="vault-search">🔍 Search guides…</div>
+
+          <div class="vault-cats">
+            <div class="cat"><span class="ico">🚐</span>Camper<br><span style="font-weight: 400; font-size: 11px; color: var(--muted);">12 guides</span></div>
+            <div class="cat"><span class="ico">🚗</span>2026 Subaru<br><span style="font-weight: 400; font-size: 11px; color: var(--muted);">8 guides</span></div>
+            <div class="cat"><span class="ico">🖨️</span>Brother printer<br><span style="font-weight: 400; font-size: 11px; color: var(--muted);">5 guides</span></div>
+            <div class="cat"><span class="ico">📺</span>Onn streaming<br><span style="font-weight: 400; font-size: 11px; color: var(--muted);">3 guides</span></div>
+            <div class="cat"><span class="ico">📱</span>Samsung phone<br><span style="font-weight: 400; font-size: 11px; color: var(--muted);">6 guides</span></div>
+            <div class="cat"><span class="ico">💻</span>This computer<br><span style="font-weight: 400; font-size: 11px; color: var(--muted);">10 guides</span></div>
+          </div>
+
+          <div style="font-size: 12px; font-weight: 700; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-top: 4px;">Recently viewed</div>
+
+          <div class="vault-entries">
+            <div class="entry"><div><div class="name">How to dump the camper waste tanks</div><div class="det">Camper · 6 steps · ⏱ 10 min</div></div><span style="font-size: 18px;">›</span></div>
+            <div class="entry"><div><div class="name">Reconnecting Onn box to Jellyfin</div><div class="det">Onn streaming · 4 steps</div></div><span style="font-size: 18px;">›</span></div>
+            <div class="entry"><div><div class="name">Importing photos from your Samsung</div><div class="det">Samsung phone · 5 steps</div></div><span style="font-size: 18px;">›</span></div>
+            <div class="entry"><div><div class="name">How to free up space on your main drive</div><div class="det">This computer · 8 steps · ⏱ 10 min</div></div><span style="font-size: 18px;">›</span></div>
+          </div>
+        </div>
+
+        <!-- CHECKLISTS -->
+        <div class="screen hide" data-screen="checklists">
+          <div class="greeting">← Back to home</div>
+          <h2 style="font-size: 26px; font-weight: 800;">Checklists</h2>
+
+          <div class="status-card good">
+            <div class="status-eyebrow">In progress</div>
+            <div class="status-headline">Pre-departure for the camper</div>
+            <div class="status-sub">7 of 12 done · last updated 5 minutes ago</div>
+          </div>
+
+          <div class="confirm-list">
+            <div class="confirm-row">
+              <span class="check">✓</span>
+              <div style="flex: 1; text-decoration: line-through; color: var(--muted);">
+                <div class="what">Awning rolled in and locked</div>
+              </div>
+            </div>
+            <div class="confirm-row">
+              <span class="check">✓</span>
+              <div style="flex: 1; text-decoration: line-through; color: var(--muted);">
+                <div class="what">Slide-outs retracted</div>
+              </div>
+            </div>
+            <div class="confirm-row">
+              <span class="check">✓</span>
+              <div style="flex: 1; text-decoration: line-through; color: var(--muted);">
+                <div class="what">Water pump turned off</div>
+              </div>
+            </div>
+            <div class="confirm-row">
+              <div style="width: 18px; height: 18px; border: 2px solid var(--ink); border-radius: 4px; flex-shrink: 0; margin-top: 2px;"></div>
+              <div style="flex: 1;">
+                <div class="what">Propane tanks closed</div>
+                <div class="det">Behind passenger side panel · turn lever to OFF position</div>
+              </div>
+            </div>
+            <div class="confirm-row">
+              <div style="width: 18px; height: 18px; border: 2px solid var(--ink); border-radius: 4px; flex-shrink: 0; margin-top: 2px;"></div>
+              <div style="flex: 1;">
+                <div class="what">Wheel chocks removed and stored</div>
+              </div>
+            </div>
+            <div class="confirm-row">
+              <div style="width: 18px; height: 18px; border: 2px solid var(--ink); border-radius: 4px; flex-shrink: 0; margin-top: 2px;"></div>
+              <div style="flex: 1;">
+                <div class="what">Hitch locked, breakaway cable connected</div>
+                <div class="det">Pin in place, cable attached to truck, not bumper</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="font-size: 12px; font-weight: 700; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase;">Other checklists</div>
+
+          <div class="vault-entries">
+            <div class="entry"><div><div class="name">Pre-Zoom-call check</div><div class="det">Camera, mic, internet · 4 items</div></div><span style="font-size: 18px;">›</span></div>
+            <div class="entry"><div><div class="name">Camper winterization</div><div class="det">Annual · 18 items</div></div><span style="font-size: 18px;">›</span></div>
+            <div class="entry"><div><div class="name">Returning home from a trip</div><div class="det">Unload, refill propane, etc · 9 items</div></div><span style="font-size: 18px;">›</span></div>
+            <div class="entry"><div><div class="name">Monthly computer check-in</div><div class="det">Updates, backup, disk space · 5 items</div></div><span style="font-size: 18px;">›</span></div>
+          </div>
+        </div>
+
+        <!-- SETTINGS / ADVANCED -->
+        <div class="screen hide" data-screen="settings">
+          <div class="greeting">← Back to home <span style="float: right; color: var(--muted); font-family: 'JetBrains Mono', monospace; font-size: 11px;">Ctrl+Shift+A · admin</span></div>
+
+          <div style="display: flex; gap: 4px; border-bottom: 1px solid var(--line); margin-bottom: 4px; overflow-x: auto;">
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; padding: 8px 12px; border-bottom: 2px solid var(--ink); font-weight: 700; margin-bottom: -1px;">General</div>
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; padding: 8px 12px; color: var(--muted);">Vault</div>
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; padding: 8px 12px; color: var(--muted);">Diagnostics</div>
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; padding: 8px 12px; color: var(--muted);">Logs</div>
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; padding: 8px 12px; color: var(--muted);">Connectors</div>
+          </div>
+
+          <div style="background: var(--paper); border: 1px solid var(--line); border-radius: 8px; padding: 14px;">
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); margin-bottom: 10px; letter-spacing: 0.1em;">DRIVES</div>
+            <div style="display: grid; grid-template-columns: 60px 1fr auto; gap: 8px 14px; font-size: 13px; font-family: 'JetBrains Mono', monospace; align-items: center;">
+              <div style="color: var(--muted);">main</div><div>C:\ · Samsung 256 GB SSD</div><div style="color: var(--bad);">92% full</div>
+              <div style="color: var(--muted);">big</div><div>D:\ · WDC 1 TB internal</div><div style="color: var(--good);">19% used</div>
+              <div style="color: var(--muted);">ext</div><div>E:\ · Seagate 1 TB external</div><div style="color: var(--muted);">offline</div>
+            </div>
+          </div>
+
+          <div style="background: var(--paper); border: 1px solid var(--line); border-radius: 8px; padding: 14px;">
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); margin-bottom: 12px; letter-spacing: 0.1em;">QUIET HOURS &amp; UI</div>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; font-size: 13px;">
+                <span>No notifications during quiet hours</span>
+                <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 3px 8px; background: var(--good-soft); color: #3f5a37; border-radius: 4px;">9pm – 7am</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: center; font-size: 13px;">
+                <span>Show vault auto-lock after</span>
+                <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 3px 8px; background: var(--canvas-2); border-radius: 4px;">15 min</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: center; font-size: 13px;">
+                <span>Run scans (disk, printer, internet)</span>
+                <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 3px 8px; background: var(--canvas-2); border-radius: 4px;">every 5 min</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: center; font-size: 13px;">
+                <span>Read-only mode (cannot be disabled)</span>
+                <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 3px 8px; background: var(--good-soft); color: #3f5a37; border-radius: 4px;">LOCKED ON</span>
+              </div>
+            </div>
+          </div>
+
+          <div style="background: var(--paper); border: 1px solid var(--line); border-radius: 8px; padding: 14px;">
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); margin-bottom: 12px; letter-spacing: 0.1em;">PANIC BUTTON ROUTING</div>
+            <div style="display: grid; grid-template-columns: 70px 1fr; gap: 8px 14px; font-size: 13px; font-family: 'JetBrains Mono', monospace;">
+              <div style="color: var(--muted);">email</div><div>joel@joel-and-mom.com</div>
+              <div style="color: var(--muted);">sms</div><div>+1 (XXX) XXX-XXXX</div>
+              <div style="color: var(--muted);">webhook</div><div>https://hooks.joel.com/mom-stuck</div>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
+            <div class="stuck-action" style="font-size: 12px;">Export vault backup</div>
+            <div class="stuck-action" style="font-size: 12px;">View action log</div>
+            <div class="stuck-action" style="font-size: 12px;">Run diagnostics</div>
+          </div>
+        </div>
+
+      </div><!-- /frame -->
+    </div><!-- /frame-wrap -->
+
+    <!-- ANNOTATIONS COLUMN -->
+    <div class="annotations" id="annotations">
+      <!-- filled by JS -->
+    </div>
+  </div>
+
+  <div class="footer">
+    <span>moms-pc-helper · wireframe v0.1</span>
+    <span>nunito · jetbrains mono · always confirm · big buttons · plain language</span>
+  </div>
+</div>
+
+<script>
+  const annotations = {
+    home: {
+      title: "Home Screen",
+      notes: [
+        ["One status card, one big action — but the action is now a guide", "The headline is unchanged: top problem, with the action button right inside it. The shift is that 'Show me how' opens a walkthrough instead of executing — same hierarchy, different promise."],
+        ["Personal greeting", "Uses her name. Tiny touch, big difference."],
+        ["Plain-language metadata", "'A guided walkthrough · about 10 minutes' tells her what she's signing up for, not what the app will do to her files."],
+        ["Status grid as glanceable cards", "Pills (Ready / 312 / 2 days ago) communicate state without forcing her to read."],
+        ["Persistent panic button", "Always at the bottom of home. Same place every time. Most valuable feature for her, since she only needs to remember one button."]
+      ],
+      tech: "<b>Stack:</b> Electron main + React renderer<br><b>Data:</b> SQLite (better-sqlite3) for vault & checklist state<br><b>Polling:</b> read-only — Get-Volume, Get-Printer, ping every 5 min<br><b>Read-only mode is hard-coded:</b> no PowerShell write commands ship in the binary"
+    },
+    cleanup: {
+      title: "Disk Report (was Cleanup)",
+      notes: [
+        ["Two disk bars side-by-side", "She sees the imbalance instantly. Numbers in plain GB, not bytes."],
+        ["Each item described in plain language", "'Move to big drive. Quick Access still works.' kills her #1 fear before she even taps."],
+        ["Per-item OR full walkthrough", "Tapping any row opens its specific how-to. The button at the bottom strings them into a single guided session."],
+        ["Recycle bin & temp grouped as one item", "She doesn't need to know what Windows Update leftovers are. The guide just says 'right-click Recycle Bin → Empty' and shows the temp-files button in Settings."]
+      ],
+      tech: "<b>Detection:</b> Get-Volume, Get-PSDrive, du-style scan via Get-ChildItem -Recurse with size aggregation<br><b>Walkthroughs:</b> Markdown + screenshots, bundled in /resources/guides/<br><b>No write actions:</b> the app never moves files; the guide tells her where to right-click in File Explorer"
+    },
+    stuck: {
+      title: "I'm Stuck (panic button)",
+      notes: [
+        ["Free-text first, voice and screenshot as helpers", "Some people type, some don't. Both routes work."],
+        ["Transparent about what's sent", "She sees the diagnostic checklist. No surprise data leaving her PC."],
+        ["Big red send button at bottom", "Thumb-zone, unmissable. Red signals 'this is the help button.'"],
+        ["Email + technical bundle attached", "Plain English in the email body so you can read it on your phone; technical bundle attached for when you sit down at a real keyboard."]
+      ],
+      tech: "<b>Diagnostic bundle:</b> JSON + zipped logs<br><b>Transport:</b> SMTP via Gmail app password (or Resend) — outbound only, no firewall change<br><b>Speech:</b> Web Speech API in renderer<br><b>Only outbound writes:</b> SMTP send and a local log entry. Zero filesystem changes outside the app's own dir."
+    },
+    "vault-lock": {
+      title: "Find My Stuff — Locked",
+      notes: [
+        ["Single-purpose locked screen", "No menus, no other navigation. She knows what to do."],
+        ["Windows Hello primary, password fallback", "She unlocks with the PIN/face/finger she already knows. Master password is a backup, not a daily ask."],
+        ["Friendly explanation of what's inside", "Reminds her this is the place those things live, in case she forgot."]
+      ],
+      tech: "<b>Storage:</b> SQLCipher (AES-256), key from Argon2id(masterPassword)<br><b>Hello:</b> Windows.Security.Credentials.UI via WinRT<br><b>Backup:</b> nightly encrypted dump to D:\\.pchelper-vault-backup\\ <em>(only writes inside the app's dedicated dir)</em>"
+    },
+    "vault-open": {
+      title: "Find My Stuff — Open",
+      notes: [
+        ["Search at top", "Once she has 50+ entries, search beats browsing."],
+        ["Six fixed categories", "Not user-configurable in v1 — fewer decisions for her. Custom categories in v2 if needed."],
+        ["Recently viewed", "She's looking up the same 5 things 80% of the time. Front-load them."],
+        ["Photo attachments", "'Camper title — top drawer of filing cabinet' with a photo. Better than text alone."],
+        ["Auto-lock after 15 min idle", "She forgets to close things. The vault doesn't."]
+      ],
+      tech: "<b>Schema:</b> entries (id, category, title, body_encrypted, attachments, updated_at)<br><b>Attachments:</b> encrypted blobs in vault dir, never plaintext on disk<br><b>Search:</b> SQLite FTS5 over decrypted titles only"
+    },
+    scam: {
+      title: "Scam Shield",
+      notes: [
+        ["Drop zone is the whole interaction", "No 'paste here' field, no upload button — just one big target. Drag, paste, or drop all work."],
+        ["Verdict in plain language", "'It's a UPS phishing pattern. Don't click. You can delete it.' She doesn't need to know what DKIM is."],
+        ["Forward-to-email companion", "Cross-device coverage. She catches it on her phone, app processes it on her PC."],
+        ["Last check stays visible", "Reassurance that this thing actually does something."]
+      ],
+      tech: "<b>Local checks:</b> URL reputation (Google Safe Browsing API), domain age, sender SPF/DKIM<br><b>LLM:</b> Claude API with the email/text → structured verdict JSON<br><b>Inbox:</b> Proton/Gmail IMAP poll every 5 min — read-only, marked-as-read after analysis<br><b>No system access:</b> entirely contained inside the app + an outbound API call."
+    },
+    internet: {
+      title: "Internet Diagnostics & Router How-To",
+      notes: [
+        ["Diagnosis as a checklist", "She sees exactly where the break is. Builds trust before the fix is suggested."],
+        ["Single recommended action — points to a guide", "The app doesn't touch her router. It opens a 3-step walkthrough: unplug, wait, plug back in. With photos so she knows what cable to pull."],
+        ["Honest expectation-setting", "'Three simple steps · about 90 seconds.' She knows the shape of the task before she starts."],
+        ["Auto-reconnect detection", "Once internet's back, banner flips to '✓ Internet is back'. She gets closure."]
+      ],
+      tech: "<b>Diag:</b> ping gateway, ping 1.1.1.1, DNS lookup, traceroute first hop<br><b>Walkthrough:</b> Markdown guide bundled with the app, with photos for the typical router<br><b>Recovery:</b> exponential backoff ping until internet returns or 3 min timeout<br><b>No router API access in v1:</b> no creds to store, no scraping risk."
+    },
+    backup: {
+      title: "Backup Status",
+      notes: [
+        ["One-line verdict at top, not a status table", "She doesn't want to interpret data. 'Mostly safe' is a one-glance read; the details live below."],
+        ["Per-category coverage", "Photos vs documents vs email vs camper photos. She knows exactly what's protected and what isn't — no false security."],
+        ["Two destinations encouraged in the guide", "Local HDD + cloud. One is fast restore, one survives a fire or theft."],
+        ["Last *successful*, not last *attempted*", "Most backup tools say 'enabled' even when they've been silently failing. The status here is read from Windows Backup's logs, not its config."]
+      ],
+      tech: "<b>Read sources:</b> File History config + last-run logs, OneDrive sync state, manual robocopy logs<br><b>Show-me-how:</b> launches Windows Backup settings via 'start ms-settings:backup' — Windows handles the rest<br><b>No backup engine ships in this app:</b> Windows already has one; we just report on it."
+    },
+    subs: {
+      title: "Subscription Tracker (manual entry)",
+      notes: [
+        ["Monthly total as the headline number", "The figure that shocks her into acting. Annual figure right below for the bigger emotional punch."],
+        ["Manual entry only", "She (or you, on the first visit) types the 8–12 things she's paying for. 15 minutes once. No inbox access, no credentials, no IMAP plumbing — and the data quality goes UP because she'll add things email-scanning would miss (gym, insurance, family Patreon)."],
+        ["Overlap detection is the killer feature", "'McAfee + Defender' and 'Hulu + Netflix' get called out by name in the row. Saves real money."],
+        ["Renewal dates are why this exists", "She wants to cancel BEFORE the charge, not chase a refund after. Sorted soonest-first."]
+      ],
+      tech: "<b>Storage:</b> SQLite, local only<br><b>Schema:</b> subs (id, name, cost_monthly, renewal_date, category, cancel_url)<br><b>Overlap rules:</b> hand-curated category map — flags pairs in same category<br><b>Cancel actions:</b> deep-link to provider's cancel page (curated URL registry)"
+    },
+    print: {
+      title: "Print Queue (status only)",
+      notes: [
+        ["Status visible without any action button", "She sees what's stuck. That alone reduces panic about whether documents were lost."],
+        ["Most-likely-fix as a guide, not a button", "'Show me how to fix this' walks her through Settings → Printers → Open queue → Cancel All. She does it; the app just teaches."],
+        ["Escalation guides as secondary", "'How to print a test page' and 'How to re-add the printer' are the next two things to try. Surfaced but not pushed."],
+        ["Brother model name visible", "Knows her exact model. Generic 'printer' would feel impersonal and is worse for support calls with you."]
+      ],
+      tech: "<b>Read:</b> Get-PrintJob, Get-Printer<br><b>Walkthroughs:</b> Markdown + screenshots taken from her actual model<br><b>No spooler control:</b> the app never restarts services. The guide tells her how, in Windows."
+    },
+    updates: {
+      title: "Updates Ready",
+      notes: [
+        ["Single roll-up replaces 5 system nags", "Windows nags. Chrome nags. Office nags. Now there's one place, in plain language, on her schedule."],
+        ["Plain-English categories with icons", "'Windows · 2 updates · 4 minutes · restart needed' is enough. She doesn't need release-note jargon."],
+        ["Restart flag surfaced upfront", "If anything needs a restart, she knows BEFORE clicking — no mid-Zoom-call surprises."],
+        ["Button just opens Windows Update", "Windows already knows how to install these correctly. The app just collected the news and sent her to the right place."]
+      ],
+      tech: "<b>Read:</b> Get-WindowsUpdate (PSWindowsUpdate module), winget upgrade --include-unknown<br><b>Action:</b> 'start ms-settings:windowsupdate' — Windows handles the actual install<br><b>No installs from this app:</b> we don't compete with Windows Update; we just summarize it."
+    },
+    manuals: {
+      title: "Manuals & How-To Guides",
+      notes: [
+        ["Library lives offline so it works in the camper", "Markdown + images bundled with the app. No connectivity needed — exactly when she's most likely to need a guide."],
+        ["Curated, not Wikipedia-wide", "Only her stuff: her camper model, her 2026 Subaru, her Brother HL-L2350DW, her Onn box, her Samsung. Six categories that map to her life — every guide is relevant."],
+        ["Search for the moment between knowing and finding", "She remembers a phrase ('dump tanks', 'Jellyfin') but not where the guide lives. Search beats hierarchy."],
+        ["Recently viewed front-loaded", "The same 4–5 guides get used 80% of the time (waste tanks, Jellyfin reconnect, photo import). Surface them."],
+        ["Step counts & time estimates visible", "She knows what she's signing up for before tapping. '6 steps · 10 min' sets expectations."]
+      ],
+      tech: "<b>Storage:</b> /resources/guides/&lt;category&gt;/&lt;guide-id&gt;.md + .png assets<br><b>Schema:</b> frontmatter (title, category, steps, est_minutes, last_updated)<br><b>Adding guides:</b> drop-in files; rebuilt on app update<br><b>You can write new guides from your Mac</b> — they ship with the next release."
+    },
+    checklists: {
+      title: "Checklists",
+      notes: [
+        ["One in-progress checklist at the top", "If she's mid-departure, she sees that immediately. Picks up where she left off."],
+        ["Items have hint text for the tricky ones", "'Behind passenger side panel · turn lever to OFF.' She doesn't need to remember which side."],
+        ["State persists across sessions", "She closes the app, comes back tomorrow — checkmarks are still there. Crucial for multi-day prep tasks like winterization."],
+        ["Other checklists below as a list", "Pre-Zoom call, returning home, monthly computer check-in. Pattern is the same: a list of items, optional hint text, persistent state."],
+        ["Templated, not one-off", "Each checklist is a template that resets when 'completed' — she runs the camper pre-departure every trip without rebuilding it."]
+      ],
+      tech: "<b>Storage:</b> SQLite — checklist_templates (markdown) + checklist_runs (state)<br><b>Markdown format:</b> [ ] item<br>  hint text for that item<br><b>Reset:</b> tap 'Done' on a complete checklist → archives the run, ready for next time<br><b>Shareable:</b> templates are .md files; you can author new ones & ship via app updates"
+    },
+    onboard: {
+      title: "First-Run Onboarding",
+      notes: [
+        ["Personalized from word one", "Uses her name, signed by you. Establishes whose tool this is and why she should trust it."],
+        ["The promise: I never change anything", "The single most important sentence in the app. Read-only is the trust foundation. Says it explicitly during onboarding."],
+        ["App already discovered the problem", "Detection runs in the background while the welcome screen renders. By the time she finishes reading, it's earned credibility — 'oh, it actually noticed things.'"],
+        ["No registration, no account creation", "Vault setup is step 2 (skippable). Don't gate the first 'aha' behind any form."]
+      ],
+      tech: "<b>Detection:</b> wmic logicaldisk, Get-PhysicalDisk, Get-Printer, USB device enum (all read-only)<br><b>Config:</b> %APPDATA%\\Roaming\\moms-pc-helper\\config.json<br><b>First-run flag:</b> set after step 4 completes; never shown again"
+    },
+    settings: {
+      title: "Advanced (your admin panel)",
+      notes: [
+        ["Hidden behind a keyboard shortcut", "Ctrl+Shift+A. She'll never stumble in. You don't have to explain or hide what it does."],
+        ["Different visual language signals 'not for you'", "Mono font, denser layout, technical terms (C:\\ instead of 'main drive'). Subliminally clear who this is for."],
+        ["Read-only mode is LOCKED ON", "Surfaced as a config row that explicitly cannot be turned off. A signal both to her (if she ever sees this) and to future-Joel-tempted-to-add-write-features."],
+        ["Panic routing configurable", "Email, SMS via Twilio, webhook for whatever you build. Her 'I'm stuck' button reaches you whatever your setup is."],
+        ["Connectors as plugins", "Smart-plug brand, IMAP creds, scam-check inbox. All stored in vault. New connectors = drop-in files in /connectors/."]
+      ],
+      tech: "<b>Access:</b> globalShortcut.register('CommandOrControl+Shift+A')<br><b>Storage:</b> config.json + secrets in vault DB (never plaintext)<br><b>Logs:</b> electron-log, rolling 7-day window, 50MB cap<br><b>Diagnostics export:</b> zips logs + sanitized config (vault keys redacted) ready to email"
+    }
+  };
+
+  const tabs = document.querySelectorAll('.tab');
+  const screens = document.querySelectorAll('.screen');
+  const annoEl = document.getElementById('annotations');
+  const screenLabel = document.getElementById('screen-label');
+
+  function renderAnnotations(key) {
+    const a = annotations[key];
+    if (!a) return;
+    annoEl.innerHTML = `
+      <div class="anno-eyebrow">Design notes</div>
+      <div class="anno-title">${a.title}</div>
+      ${a.notes.map(([w, why]) => `<div class="anno"><div class="what">${w}</div><div class="why">${why}</div></div>`).join('')}
+      <div class="anno-tech">${a.tech}</div>
+    `;
+  }
+
+  function show(key, idx) {
+    tabs.forEach(t => t.classList.toggle('active', t.dataset.screen === key));
+    screens.forEach(s => s.classList.toggle('hide', s.dataset.screen !== key));
+    const numbers = { home:'01', cleanup:'02', stuck:'03', 'vault-lock':'04', 'vault-open':'05', scam:'06', internet:'07', backup:'08', subs:'09', print:'10', updates:'11', manuals:'12', checklists:'13', onboard:'14', settings:'15' };
+    const labels = { home:'Home Screen', cleanup:'Disk Report', stuck:"I'm Stuck", 'vault-lock':'Vault (Locked)', 'vault-open':'Vault (Open)', scam:'Scam Shield', internet:'Internet & How-To', backup:'Backup Status', subs:'Subscriptions', print:'Print Queue', updates:'Updates Ready', manuals:'Manuals & Guides', checklists:'Checklists', onboard:'First Run', settings:'Advanced (admin)' };
+    screenLabel.textContent = `${numbers[key]} — ${labels[key]}`;
+    renderAnnotations(key);
+  }
+
+  tabs.forEach(t => t.addEventListener('click', () => show(t.dataset.screen)));
+  show('home');
+</script>
+</body>
+</html>

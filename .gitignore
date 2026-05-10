@@ -1,0 +1,30 @@
+# Dependencies
+node_modules/
+
+# Build output
+out/
+dist/
+
+# Electron-vite cache
+.vite/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+
+# Env / secrets — never commit these
+.env
+.env.local
+*.env
+
+# Logs
+*.log
+npm-debug.log*
+
+# electron-builder temp
+app-update.yml

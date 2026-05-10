@@ -1,0 +1,348 @@
+/* Component styles — all classes match wireframe-v3 exactly */
+
+/* ── Screen shell ─────────────────────────────────────────────────────── */
+.screen {
+  padding: var(--screen-padding);
+  display: flex;
+  flex-direction: column;
+  gap: var(--screen-gap);
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* ── Greeting ─────────────────────────────────────────────────────────── */
+.greeting {
+  font-size: 14px;
+  color: var(--muted);
+  font-weight: 600;
+}
+.greeting strong {
+  color: var(--ink);
+  font-weight: 800;
+}
+.greeting-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  font-family: var(--font-ui);
+  font-size: 14px;
+  color: var(--muted);
+  font-weight: 600;
+  padding: 0;
+}
+.greeting-back:hover { color: var(--ink); }
+
+/* ── BigButton ────────────────────────────────────────────────────────── */
+.big-btn {
+  display: block;
+  width: 100%;
+  background: var(--ink);
+  color: var(--paper);
+  border: none;
+  border-radius: var(--radius-lg);
+  padding: var(--btn-padding-y) var(--btn-padding-x);
+  font-family: var(--font-ui);
+  font-size: var(--btn-font-size);
+  font-weight: 800;
+  cursor: pointer;
+  text-align: left;
+  line-height: 1.2;
+  transition: opacity 0.15s, transform 0.1s;
+}
+.big-btn:hover:not(:disabled) { opacity: 0.92; }
+.big-btn:active:not(:disabled) { transform: translateY(1px); }
+.big-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.big-btn.accent  { background: var(--accent); }
+.big-btn.good    { background: var(--good); }
+.big-btn.danger  { background: var(--bad); }
+.big-btn .meta {
+  display: block;
+  font-size: var(--btn-meta-font-size);
+  font-weight: 600;
+  opacity: 0.7;
+  margin-top: 4px;
+}
+
+/* ── StatusCard ───────────────────────────────────────────────────────── */
+.status-card {
+  background: linear-gradient(180deg, var(--accent-soft), #f8e0de);
+  border: 2px solid var(--accent);
+  border-radius: var(--radius-2xl);
+  padding: var(--status-card-padding);
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.status-card.good {
+  background: linear-gradient(180deg, var(--good-soft), #e3edda);
+  border-color: var(--good);
+}
+.status-card.warn {
+  background: linear-gradient(180deg, var(--warn-soft), #f5e8c8);
+  border-color: var(--warn);
+}
+.status-eyebrow {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 6px;
+}
+.status-card.good .status-eyebrow { color: var(--good); }
+.status-card.warn .status-eyebrow { color: #8a6c1d; }
+.status-headline {
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1.2;
+  margin-bottom: 4px;
+}
+.status-sub {
+  color: var(--ink-2);
+  font-size: 15px;
+  margin-bottom: 16px;
+}
+.status-card-action { margin-top: 0; }
+
+/* ── ActionCard (home grid) ───────────────────────────────────────────── */
+.grid-cards {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.action-card {
+  background: var(--paper);
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: var(--card-padding);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  text-align: left;
+  font-family: var(--font-ui);
+}
+.action-card:hover {
+  border-color: var(--ink-2);
+  box-shadow: var(--shadow-card);
+}
+.action-card .card-icon {
+  width: 36px;
+  height: 36px;
+  background: var(--canvas-2);
+  border-radius: var(--radius-md);
+  display: grid;
+  place-items: center;
+  font-size: 18px;
+  margin-bottom: 6px;
+}
+.action-card .card-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+}
+.action-card .card-name {
+  font-weight: 800;
+  font-size: 15px;
+  color: var(--ink);
+}
+.action-card .card-desc {
+  font-size: 13px;
+  color: var(--ink-2);
+}
+
+/* ── ConfirmList + ConfirmRow ─────────────────────────────────────────── */
+.confirm-list {
+  background: var(--paper);
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 4px 0;
+}
+.confirm-row {
+  display: flex;
+  gap: 12px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--canvas-2);
+  align-items: flex-start;
+  cursor: default;
+}
+.confirm-row.clickable { cursor: pointer; }
+.confirm-row.clickable:hover { background: var(--canvas); }
+.confirm-row:last-child { border-bottom: none; }
+.confirm-check {
+  font-weight: 800;
+  flex-shrink: 0;
+  width: 20px;
+  text-align: center;
+  line-height: 1.6;
+}
+.confirm-check.good  { color: var(--good); }
+.confirm-check.warn  { color: var(--warn); }
+.confirm-check.bad   { color: var(--bad); }
+.confirm-check.muted { color: var(--muted); }
+.confirm-body { flex: 1; min-width: 0; }
+.confirm-what {
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--ink);
+}
+.confirm-det {
+  font-size: 13px;
+  color: var(--ink-2);
+}
+.confirm-row-icon {
+  width: 36px;
+  height: 36px;
+  background: var(--canvas-2);
+  border-radius: var(--radius-md);
+  display: grid;
+  place-items: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.confirm-row-icon.accent { background: var(--accent-soft); }
+
+/* Checkbox style (for checklists) */
+.confirm-checkbox {
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--ink);
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+  margin-top: 2px;
+  cursor: pointer;
+  background: none;
+  appearance: none;
+  -webkit-appearance: none;
+}
+.confirm-checkbox:checked {
+  background: var(--good);
+  border-color: var(--good);
+}
+.confirm-checkbox:checked::after {
+  content: '✓';
+  display: block;
+  color: white;
+  font-size: 11px;
+  font-weight: 800;
+  text-align: center;
+  line-height: 14px;
+}
+.confirm-what.done {
+  text-decoration: line-through;
+  color: var(--muted);
+}
+
+/* ── DiskBar ──────────────────────────────────────────────────────────── */
+.disk-row { display: flex; flex-direction: column; gap: 10px; }
+.disk-bar-wrap {
+  background: var(--paper);
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 14px;
+}
+.disk-head {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.disk-head .free {
+  color: var(--muted);
+  font-weight: 600;
+}
+.disk-track {
+  height: 14px;
+  background: var(--canvas-2);
+  border-radius: 7px;
+  overflow: hidden;
+}
+.disk-fill {
+  display: block;
+  height: 100%;
+  border-radius: 7px;
+  transition: width 0.4s ease;
+}
+.disk-fill.warn { background: var(--accent); }
+.disk-fill.ok   { background: var(--good); }
+
+/* ── PanicBar ─────────────────────────────────────────────────────────── */
+.panic-bar {
+  margin-top: auto;
+  background: var(--bad);
+  color: var(--paper);
+  border-radius: var(--radius-xl);
+  padding: 16px 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  border: none;
+  font-family: var(--font-ui);
+  width: 100%;
+  transition: opacity 0.15s;
+}
+.panic-bar:hover { opacity: 0.92; }
+.panic-label { font-weight: 800; font-size: 16px; }
+.panic-hint  { font-size: 12px; opacity: 0.85; }
+.panic-arrow { font-size: 22px; }
+
+/* ── GuideViewer ──────────────────────────────────────────────────────── */
+.guide-viewer { display: flex; flex-direction: column; gap: 16px; }
+.guide-step-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+}
+.guide-step-btn {
+  background: var(--paper);
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 6px 12px;
+  font-family: var(--font-ui);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  color: var(--ink);
+}
+.guide-step-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+.guide-content {
+  background: var(--paper);
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--ink-2);
+}
+.guide-content h2 {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--ink);
+  margin-bottom: 10px;
+}
+.guide-content img {
+  max-width: 100%;
+  border-radius: var(--radius-md);
+  margin: 12px 0;
+}
+.guide-content p { margin-bottom: 10px; }
+.guide-content ul, .guide-content ol {
+  padding-left: 20px;
+  margin-bottom: 10px;
+}
+.guide-content li { margin-bottom: 4px; }
+
+/* ── ChecklistView (used inside Checklists screen) ────────────────────── */
+.checklist-view { display: flex; flex-direction: column; gap: 0; }

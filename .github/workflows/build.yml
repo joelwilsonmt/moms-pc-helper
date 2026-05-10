@@ -1,0 +1,69 @@
+name: Build Windows Installer
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  # Lets Joel trigger a build manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Typecheck & tests (macOS fast)
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --ignore-scripts
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Tests
+        run: npm test
+
+  build-windows:
+    name: Build Windows installer
+    runs-on: windows-latest
+    needs: test
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        # Full install (with scripts) so native modules compile for Electron on Windows
+        run: npm ci
+
+      - name: Rebuild native modules for Electron
+        # Ensures better-sqlite3 and better-sqlite3-multiple-ciphers link
+        # against Electron's Node ABI, not the system Node ABI
+        run: npx electron-builder install-app-deps
+
+      - name: Build
+        run: npm run build
+
+      - name: Package Windows installer
+        run: npx electron-builder --win --publish never
+        env:
+          # electron-builder reads these for code signing — leave blank for
+          # unsigned v1 builds (SmartScreen warns once; Joel clicks through)
+          CSC_IDENTITY_AUTO_DISCOVERY: false
+
+      - name: Upload installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: MomsPCHelper-Setup-${{ github.run_number }}
+          path: dist/*.exe
+          if-no-files-found: error
+          retention-days: 30

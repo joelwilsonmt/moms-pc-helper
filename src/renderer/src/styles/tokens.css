@@ -1,0 +1,100 @@
+/* CSS design tokens — extracted from moms-pc-helper-wireframe-v3.html */
+
+:root {
+  /* Color palette */
+  --canvas: #f4f0e8;
+  --canvas-2: #ebe5d8;
+  --ink: #221f1a;
+  --ink-2: #4a463d;
+  --muted: #8a8478;
+  --line: #c9c2b2;
+  --paper: #fbf8f1;
+
+  /* Semantic colors */
+  --accent: #c25450;
+  --accent-soft: #f1d6d4;
+  --good: #5a7a4f;
+  --good-soft: #d8e3d2;
+  --warn: #d4a23b;
+  --warn-soft: #f3e4c0;
+  --bad: #b13a32;
+
+  /* Typography */
+  --font-ui: 'Nunito', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* Spacing scale */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 28px;
+  --space-8: 32px;
+
+  /* Border radius */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 10px;
+  --radius-xl: 12px;
+  --radius-2xl: 14px;
+  --radius-full: 999px;
+
+  /* Shadows */
+  --shadow-card: 6px 6px 0 0 var(--canvas-2);
+
+  /* Component sizing */
+  --btn-padding-y: 18px;
+  --btn-padding-x: 20px;
+  --btn-font-size: 18px;
+  --btn-meta-font-size: 13px;
+
+  --card-padding: 16px;
+  --status-card-padding: 22px;
+
+  --screen-padding: 28px;
+  --screen-gap: 18px;
+}
+
+/* Base reset */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body, #root {
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  background: var(--canvas);
+  color: var(--ink);
+  font-family: var(--font-ui);
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.5;
+}
+
+/* Utility: eyebrow label */
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* Utility: pill badge */
+.pill {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  background: var(--canvas-2);
+  color: var(--ink-2);
+}
+.pill.good { background: var(--good-soft); color: #3f5a37; }
+.pill.warn { background: var(--warn-soft); color: #8a6c1d; }
+.pill.bad  { background: var(--accent-soft); color: var(--accent); }

@@ -1,0 +1,17 @@
+appId: com.joel.moms-pc-helper
+productName: Mom's PC Helper
+directories:
+  output: dist
+files:
+  - "out/**/*"
+  - "resources/**/*"
+win:
+  target: nsis
+  icon: resources/icon.ico
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: false
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  runAfterFinish: true
