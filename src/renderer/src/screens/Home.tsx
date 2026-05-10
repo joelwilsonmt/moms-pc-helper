@@ -162,6 +162,18 @@ export default function Home(): React.JSX.Element {
           desc="Drop in an email or link"
           onClick={() => navigate('scam')}
         />
+        <ActionCard
+          icon="🔄"
+          title="Updates"
+          desc="Windows & app updates"
+          onClick={() => navigate('updates')}
+        />
+        <ActionCard
+          icon="💳"
+          title="Subscriptions"
+          desc="Track renewals & overlaps"
+          onClick={() => navigate('subs')}
+        />
       </div>
 
       {/* ── Quick-access links ──────────────────────────────────────── */}
