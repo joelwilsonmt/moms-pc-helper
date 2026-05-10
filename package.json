@@ -1,7 +1,7 @@
 {
   "name": "moms-pc-helper",
   "version": "1.0.0",
-  "description": "Mom's PC Helper — read-only PC health monitor for Donna",
+  "description": "Mom's PC Helper — read-only PC health monitor for Jan",
   "main": "./out/main/index.js",
   "homepage": "./",
   "scripts": {
@@ -13,6 +13,44 @@
     "build:win": "npm run build && electron-builder --win",
     "preview": "electron-vite preview",
     "test": "vitest run"
+  },
+  "build": {
+    "appId": "com.joelwilson.moms-pc-helper",
+    "productName": "Mom's PC Helper",
+    "copyright": "Copyright © 2025 Joel Wilson",
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "files": [
+      "out/**/*"
+    ],
+    "extraResources": [
+      {
+        "from": "resources",
+        "to": "resources",
+        "filter": ["**/*"]
+      }
+    ],
+    "win": {
+      "target": [
+        { "target": "nsis", "arch": ["x64"] }
+      ],
+      "icon": "build/icon.ico",
+      "requestedExecutionLevel": "asInvoker"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowDirChange": false,
+      "perMachine": false,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Mom's PC Helper",
+      "installerIcon": "build/icon.ico",
+      "uninstallerIcon": "build/icon.ico",
+      "license": "LICENSE.txt"
+    },
+    "publish": null
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.26.0",

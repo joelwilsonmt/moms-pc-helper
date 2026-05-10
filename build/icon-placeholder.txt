@@ -1,0 +1,10 @@
+Place icon.ico here (256x256 minimum, ICO format with 16/32/48/256 sizes).
+The CI build will fail if icon.ico is missing.
+
+To generate one:
+1. Design a 1024x1024 PNG (something simple — a house icon works well)
+2. Convert at https://convertio.co/png-ico/ with multi-size output
+3. Save as build/icon.ico
+
+For the very first build you can use any .ico file. Windows ships with
+many icons you can extract with Resource Hacker if needed.
