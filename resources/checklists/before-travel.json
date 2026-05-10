@@ -1,0 +1,12 @@
+{
+  "id": "before-travel",
+  "title": "Before you travel",
+  "description": "Quick checks before leaving with your laptop.",
+  "items": [
+    { "id": "backup",    "text": "Make sure your backup ran recently",              "hint": "Open the Backup screen in PC Helper. The last backup should be from the past day or two." },
+    { "id": "updates",   "text": "Install any pending Windows updates",             "hint": "Click Start → Settings → Windows Update. Install anything waiting — so you're not interrupted on the road." },
+    { "id": "charger",   "text": "Pack your charger",                              "hint": "Check you have the right charger for your laptop — they're not all the same." },
+    { "id": "passwords", "text": "Know your Wi-Fi password options",               "hint": "Hotels and airports have their own Wi-Fi. Your phone can also be a hotspot if needed." },
+    { "id": "vault",     "text": "Check the Password Vault is locked",             "hint": "Open the Vault in PC Helper and make sure it's locked before you leave." }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "id": "monthly-maintenance",
+  "title": "Monthly tune-up",
+  "description": "10 minutes once a month keeps your computer running smoothly.",
+  "items": [
+    { "id": "restart",   "text": "Restart the computer (not just sleep — a full restart)",  "hint": "Click Start → Power → Restart. This clears out things running in the background." },
+    { "id": "updates",   "text": "Check for Windows updates",                                "hint": "Click Start → Settings → Windows Update → Check for updates." },
+    { "id": "recycle",   "text": "Empty the Recycle Bin",                                    "hint": "Right-click the Recycle Bin on your desktop, then click \"Empty Recycle Bin.\"" },
+    { "id": "disk",      "text": "Check how full your main drive is",                        "hint": "Open the Disk Report in PC Helper. If it's over 80% full, follow the guide to free up space." },
+    { "id": "backup",    "text": "Make sure your backup is up to date",                      "hint": "Open the Backup screen in PC Helper. The last backup should be within the past week." },
+    { "id": "antivirus", "text": "Make sure Windows Defender is on and up to date",          "hint": "Click Start → Settings → Privacy & Security → Windows Security → Virus & threat protection. It should say \"No action needed.\"" }
+  ]
+}

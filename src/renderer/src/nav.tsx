@@ -20,6 +20,7 @@ export type Screen =
   | 'onboarding'
   | 'advanced'
   | 'guide'           // params: { guideId: string }
+  | 'checklist'       // params: { templateId: string }
   | '_component-demo'
 
 export type NavParams = Record<string, string>

@@ -1,0 +1,13 @@
+{
+  "id": "slow-computer",
+  "title": "My computer is slow",
+  "description": "Work through these steps in order — most slow-computer problems are solved by step 3.",
+  "items": [
+    { "id": "restart",         "text": "Restart the computer",                                       "hint": "A full restart (Start → Power → Restart) clears memory and stops things quietly running in the background. Try this first." },
+    { "id": "updates",         "text": "Check if Windows Update is running in the background",       "hint": "Click Start → Settings → Windows Update. If it shows \"Downloading…\" or \"Installing…\" that's why it's slow. Let it finish, then restart." },
+    { "id": "disk-space",      "text": "Check if the main drive is nearly full",                     "hint": "Open the Disk Report in PC Helper. A full drive (over 90%) can make the computer very slow." },
+    { "id": "startup-programs","text": "Check what's starting up with Windows",                      "hint": "Press Ctrl + Shift + Esc to open Task Manager. Click \"Startup apps.\" Anything you don't recognize that's Enabled can be right-clicked and Disabled." },
+    { "id": "antivirus-scan",  "text": "Run a virus scan",                                           "hint": "Click Start → Settings → Privacy & Security → Windows Security → Virus & threat protection → Quick scan." },
+    { "id": "temperature",     "text": "Check if the computer is hot",                               "hint": "Feel the bottom of the laptop or the back of the desktop. If very hot, let it cool down with vents unobstructed. Dust inside can cause overheating." }
+  ]
+}

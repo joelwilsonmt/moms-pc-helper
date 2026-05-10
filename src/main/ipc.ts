@@ -7,6 +7,7 @@ import type { WindowsAdapter } from './adapters/WindowsAdapter'
 import { vault, VaultUnavailableError } from './services/vault'
 import { sendPanic } from './services/panic'
 import { captureScreenshot } from './services/diagnostics'
+import * as content from './services/content'
 
 export function registerIpcHandlers(adapter: WindowsAdapter): void {
   // --- system ---
@@ -79,14 +80,14 @@ export function registerIpcHandlers(adapter: WindowsAdapter): void {
     return buf ? buf.toString('base64') : null
   })
 
-  // --- content (stubs until milestone 9) ---
-  ipcMain.handle('content:listGuides', () => [])
-  ipcMain.handle('content:getGuide', () => null)
-  ipcMain.handle('content:searchGuides', () => [])
-  ipcMain.handle('content:listChecklists', () => [])
-  ipcMain.handle('content:getChecklistRun', () => null)
-  ipcMain.handle('content:toggleChecklistItem', () => { throw new Error('Content not yet implemented') })
-  ipcMain.handle('content:resetChecklist', () => undefined)
+  // --- content ---
+  ipcMain.handle('content:listGuides', (_e, cat?: string) => content.listGuides(cat))
+  ipcMain.handle('content:getGuide', (_e, id: string) => content.getGuide(id))
+  ipcMain.handle('content:searchGuides', (_e, q: string) => content.searchGuides(q))
+  ipcMain.handle('content:listChecklists', () => content.listChecklists())
+  ipcMain.handle('content:getChecklistRun', (_e, tId: string) => content.getChecklistRun(tId))
+  ipcMain.handle('content:toggleChecklistItem', (_e, tId: string, iId: string) => content.toggleChecklistItem(tId, iId))
+  ipcMain.handle('content:resetChecklist', (_e, tId: string) => content.resetChecklist(tId))
 
   // --- app ---
   ipcMain.handle('app:isFirstRun', () => true)
