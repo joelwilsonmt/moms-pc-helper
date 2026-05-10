@@ -7,6 +7,12 @@ import { MockAdapter } from './adapters/MockAdapter'
 import { RealWindowsAdapter } from './adapters/RealWindowsAdapter'
 import type { WindowsAdapter } from './adapters/WindowsAdapter'
 
+// ── Single-instance lock — second launch focuses the existing window ─────────
+if (!app.requestSingleInstanceLock()) {
+  app.quit()
+  process.exit(0)
+}
+
 // ── Logging — writes to %APPDATA%\moms-pc-helper\logs\ on Windows ───────────
 log.initialize()
 log.transports.file.level = 'debug'
@@ -84,6 +90,15 @@ function createWindow(): BrowserWindow {
 
   return mainWindow
 }
+
+app.on('second-instance', () => {
+  // Someone tried to open a second instance — focus the existing window instead
+  const [win] = BrowserWindow.getAllWindows()
+  if (win) {
+    if (win.isMinimized()) win.restore()
+    win.focus()
+  }
+})
 
 app.whenReady().then(() => {
   log.info('app ready')
