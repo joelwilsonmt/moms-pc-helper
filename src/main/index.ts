@@ -1,16 +1,38 @@
-import { app, BrowserWindow, shell, globalShortcut } from 'electron'
+import { app, BrowserWindow, shell, globalShortcut, dialog } from 'electron'
 import { join } from 'path'
+import log from 'electron-log'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import { registerIpcHandlers } from './ipc'
 import { MockAdapter } from './adapters/MockAdapter'
 import type { WindowsAdapter } from './adapters/WindowsAdapter'
 
+// ── Logging — writes to %APPDATA%\moms-pc-helper\logs\ on Windows ───────────
+log.initialize()
+log.transports.file.level = 'debug'
+log.transports.console.level = 'debug'
+log.info('App starting', { version: app.getVersion(), platform: process.platform })
+
+// Catch any unhandled main-process exception before it silently kills the app
+process.on('uncaughtException', (err) => {
+  log.error('uncaughtException', err)
+  dialog.showErrorBox('Something went wrong', `${err.message}\n\nCheck logs at:\n${log.transports.file.getFile().path}`)
+})
+
+process.on('unhandledRejection', (reason) => {
+  log.error('unhandledRejection', reason)
+})
+
 function createAdapter(): WindowsAdapter {
   if (process.platform === 'win32') {
-    // Real adapter wired in milestone 5
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const { RealWindowsAdapter } = require('./adapters/RealWindowsAdapter')
-    return new RealWindowsAdapter()
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const { RealWindowsAdapter } = require('./adapters/RealWindowsAdapter')
+      log.info('Using RealWindowsAdapter')
+      return new RealWindowsAdapter()
+    } catch (e) {
+      log.error('Failed to load RealWindowsAdapter, falling back to Mock', e)
+      return new MockAdapter()
+    }
   }
   return new MockAdapter()
 }
@@ -32,7 +54,20 @@ function createWindow(): BrowserWindow {
     }
   })
 
-  mainWindow.on('ready-to-show', () => mainWindow.show())
+  mainWindow.on('ready-to-show', () => {
+    log.info('ready-to-show — showing window')
+    mainWindow.show()
+  })
+
+  // If renderer fails to load, show the window anyway so the error is visible
+  mainWindow.webContents.on('did-fail-load', (_e, code, desc, url) => {
+    log.error('did-fail-load', { code, desc, url })
+    mainWindow.show()
+  })
+
+  mainWindow.webContents.on('render-process-gone', (_e, details) => {
+    log.error('render-process-gone', details)
+  })
 
   mainWindow.webContents.setWindowOpenHandler((details) => {
     shell.openExternal(details.url)
@@ -42,25 +77,32 @@ function createWindow(): BrowserWindow {
   if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
     mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
   } else {
-    mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
+    const rendererPath = join(__dirname, '../renderer/index.html')
+    log.info('Loading renderer', rendererPath)
+    mainWindow.loadFile(rendererPath)
   }
 
   return mainWindow
 }
 
 app.whenReady().then(() => {
-  electronApp.setAppUserModelId('com.joel.moms-pc-helper')
+  log.info('app ready')
+  electronApp.setAppUserModelId('com.joelwilson.moms-pc-helper')
 
   app.on('browser-window-created', (_, window) => {
     optimizer.watchWindowShortcuts(window)
   })
 
-  const adapter = createAdapter()
-  registerIpcHandlers(adapter)
+  try {
+    const adapter = createAdapter()
+    registerIpcHandlers(adapter)
+    log.info('IPC handlers registered')
+  } catch (e) {
+    log.error('registerIpcHandlers failed', e)
+  }
 
   const mainWindow = createWindow()
 
-  // Advanced panel — hidden behind Ctrl+Shift+A (§7.15)
   globalShortcut.register('CommandOrControl+Shift+A', () => {
     mainWindow.webContents.send('nav:advanced')
   })
@@ -68,6 +110,8 @@ app.whenReady().then(() => {
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
   })
+}).catch((e) => {
+  log.error('app.whenReady failed', e)
 })
 
 app.on('window-all-closed', () => {
