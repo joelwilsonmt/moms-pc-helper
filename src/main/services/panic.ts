@@ -1,52 +1,36 @@
-// Panic button sender — SMTP via nodemailer.
-// Reads SMTP config from AppConfig (stored in electron-store).
-// Dev override: set SMTP_HOST, SMTP_USER, SMTP_PASSWORD, PANIC_EMAIL env vars.
-// Outbound only — no firewall changes, no write to filesystem outside app dir.
+// Panic button — opens Jan's default email client pre-filled with a help message.
+// Saves a screenshot + diagnostic JSON to the Desktop so she can attach them if needed.
+// Read-only: only writes to Desktop (user data area) and opens a mailto: URL.
 
-import nodemailer from 'nodemailer'
+import { app, shell } from 'electron'
+import { writeFileSync } from 'fs'
+import { join } from 'path'
 import type { WindowsAdapter } from '../adapters/WindowsAdapter'
 import { buildBundle, captureScreenshot, formatEmailBody } from './diagnostics'
 
-export interface PanicConfig {
-  smtpHost: string
-  smtpPort: number
-  smtpUser: string
-  smtpPassword: string
-  toEmail: string        // Joel's email
-  fromName: string       // "Jan's PC Helper"
-}
+const MAX_MAILTO_BODY = 1800  // chars — keeps the URL under typical client limits
 
-function configFromEnv(): Partial<PanicConfig> {
-  return {
-    smtpHost:     process.env['SMTP_HOST'],
-    smtpPort:     process.env['SMTP_PORT'] ? parseInt(process.env['SMTP_PORT']) : undefined,
-    smtpUser:     process.env['SMTP_USER'],
-    smtpPassword: process.env['SMTP_PASSWORD'],
-    toEmail:      process.env['PANIC_EMAIL']
+function buildMailtoBody(rawBody: string, desktopFiles: string[]): string {
+  let body = rawBody
+  if (desktopFiles.length > 0) {
+    body += `\nFiles saved to your Desktop:\n${desktopFiles.map((f) => `  ${f}`).join('\n')}\n`
   }
+  if (body.length > MAX_MAILTO_BODY) {
+    body = body.slice(0, MAX_MAILTO_BODY) + '\n…(truncated — see diagnostic file on Desktop)'
+  }
+  return body
 }
 
 export async function sendPanic(
   message: string,
   includeScreenshot: boolean,
-  panicConfig: PanicConfig,
+  toEmail: string,
   adapter: WindowsAdapter
 ): Promise<{ ok: true } | { ok: false; error: string }> {
-  // Merge env overrides (useful for dev without unlocking vault every time)
-  const env = configFromEnv()
-  const cfg: PanicConfig = {
-    smtpHost:     env.smtpHost     ?? panicConfig.smtpHost,
-    smtpPort:     env.smtpPort     ?? panicConfig.smtpPort,
-    smtpUser:     env.smtpUser     ?? panicConfig.smtpUser,
-    smtpPassword: env.smtpPassword ?? panicConfig.smtpPassword,
-    toEmail:      env.toEmail      ?? panicConfig.toEmail,
-    fromName:     panicConfig.fromName
-  }
-
-  if (!cfg.smtpHost || !cfg.smtpUser || !cfg.smtpPassword || !cfg.toEmail) {
+  if (!toEmail) {
     return {
       ok: false,
-      error: 'Panic button isn\'t set up yet — Joel needs to add his email settings. Tell him in person or by phone.'
+      error: "The help email address isn't set up yet. Ask Joel to add it in Advanced Settings."
     }
   }
 
@@ -56,40 +40,34 @@ export async function sendPanic(
       includeScreenshot ? captureScreenshot() : Promise.resolve(null)
     ])
 
-    const transporter = nodemailer.createTransport({
-      host: cfg.smtpHost,
-      port: cfg.smtpPort,
-      secure: cfg.smtpPort === 465,
-      auth: { user: cfg.smtpUser, pass: cfg.smtpPassword }
-    })
+    const desktop = app.getPath('desktop')
+    const desktopFiles: string[] = []
 
-    const attachments: nodemailer.Attachment[] = [
-      {
-        filename: 'diagnostic-bundle.json',
-        content: JSON.stringify(bundle, null, 2),
-        contentType: 'application/json'
-      }
-    ]
+    // Save diagnostic JSON to Desktop
+    const jsonName = 'pc-helper-diagnostic.json'
+    try {
+      writeFileSync(join(desktop, jsonName), JSON.stringify(bundle, null, 2), 'utf8')
+      desktopFiles.push(jsonName)
+    } catch { /* not critical if Desktop write fails */ }
 
+    // Save screenshot to Desktop if requested
     if (screenshot) {
-      attachments.push({
-        filename: 'screenshot.png',
-        content: screenshot,
-        contentType: 'image/png'
-      })
+      const pngName = 'pc-helper-screenshot.png'
+      try {
+        writeFileSync(join(desktop, pngName), screenshot)
+        desktopFiles.push(pngName)
+      } catch { /* not critical */ }
     }
 
-    await transporter.sendMail({
-      from: `"${cfg.fromName}" <${cfg.smtpUser}>`,
-      to: cfg.toEmail,
-      subject: `⚠️ Jan's PC — Something's wrong`,
-      text: formatEmailBody(bundle, !!screenshot),
-      attachments
-    })
+    const subject = encodeURIComponent("Jan's PC — Something's wrong")
+    const rawBody = formatEmailBody(bundle, !!screenshot)
+    const body = encodeURIComponent(buildMailtoBody(rawBody, desktopFiles))
+    const mailto = `mailto:${encodeURIComponent(toEmail)}?subject=${subject}&body=${body}`
 
+    await shell.openExternal(mailto)
     return { ok: true }
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e)
-    return { ok: false, error: `Couldn't send the message: ${msg}` }
+    return { ok: false, error: `Couldn't open your email: ${msg}` }
   }
 }

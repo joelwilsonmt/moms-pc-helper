@@ -67,14 +67,7 @@ export function registerIpcHandlers(adapter: WindowsAdapter): void {
   // --- panic ---
   ipcMain.handle('panic:send', async (_e, message: string, includeScreenshot: boolean) => {
     const cfg = appConfig.getConfig()
-    return sendPanic(message, includeScreenshot, {
-      smtpHost:     cfg.smtp.host,
-      smtpPort:     cfg.smtp.port,
-      smtpUser:     cfg.smtp.user,
-      smtpPassword: cfg.smtp.password,
-      toEmail:      cfg.panicEmail,
-      fromName:     `${cfg.userName}'s PC Helper`
-    }, adapter)
+    return sendPanic(message, includeScreenshot, cfg.panicEmail, adapter)
   })
   ipcMain.handle('panic:captureScreenshot', async () => {
     const buf = await captureScreenshot()

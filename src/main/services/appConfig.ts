@@ -16,8 +16,7 @@ const DEFAULTS: AppConfig = {
   quietHoursStart:      '21:00',
   quietHoursEnd:        '07:00',
   vaultAutoLockMinutes: 15,
-  scanIntervalMinutes:  5,
-  smtp: { host: '', port: 587, user: '', password: '' }
+  scanIntervalMinutes:  5
 }
 
 interface StoredConfig extends AppConfig {

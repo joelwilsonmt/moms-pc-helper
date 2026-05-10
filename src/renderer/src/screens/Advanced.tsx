@@ -5,42 +5,29 @@ import Greeting from '../components/Greeting'
 import BigButton from '../components/BigButton'
 
 interface Field {
-  key: keyof AppConfig | 'smtp.host' | 'smtp.port' | 'smtp.user' | 'smtp.password'
+  key: keyof AppConfig
   label: string
   type: 'text' | 'email' | 'number' | 'password' | 'time'
   hint?: string
 }
 
 const FIELDS: Field[] = [
-  { key: 'userName',             label: 'Your name',                  type: 'text',     hint: 'Used in greetings and the Get Help message.' },
-  { key: 'panicEmail',           label: 'Help contact email',         type: 'email',    hint: 'Where the Get Help message gets sent.' },
-  { key: 'quietHoursStart',      label: 'Quiet hours start',          type: 'time',     hint: 'No alerts after this time.' },
-  { key: 'quietHoursEnd',        label: 'Quiet hours end',            type: 'time',     hint: 'Alerts resume after this time.' },
-  { key: 'vaultAutoLockMinutes', label: 'Vault auto-lock (minutes)',  type: 'number',   hint: 'Lock the vault after this many minutes of inactivity.' },
-  { key: 'smtp.host',            label: 'SMTP server',                type: 'text',     hint: 'e.g. smtp.gmail.com — needed to send the Get Help email.' },
-  { key: 'smtp.port',            label: 'SMTP port',                  type: 'number',   hint: 'Usually 587 (TLS) or 465 (SSL).' },
-  { key: 'smtp.user',            label: 'SMTP username',              type: 'email',    hint: 'Usually the email address used to send.' },
-  { key: 'smtp.password',        label: 'SMTP password / app password', type: 'password', hint: 'For Gmail, use a 16-character App Password, not your login password.' },
+  { key: 'userName',             label: 'Your name',                 type: 'text',   hint: 'Used in greetings and the Get Help message.' },
+  { key: 'panicEmail',           label: 'Help contact email',        type: 'email',  hint: "Joel's email — where the Get Help message is sent." },
+  { key: 'quietHoursStart',      label: 'Quiet hours start',         type: 'time',   hint: 'No alerts after this time.' },
+  { key: 'quietHoursEnd',        label: 'Quiet hours end',           type: 'time',   hint: 'Alerts resume after this time.' },
+  { key: 'vaultAutoLockMinutes', label: 'Vault auto-lock (minutes)', type: 'number', hint: 'Lock the vault after this many minutes of inactivity.' },
 ]
 
-function getNestedValue(cfg: AppConfig, key: Field['key']): string {
-  if (key.startsWith('smtp.')) {
-    const sub = key.split('.')[1] as keyof AppConfig['smtp']
-    return String(cfg.smtp[sub] ?? '')
-  }
-  return String(cfg[key as keyof AppConfig] ?? '')
+function getFieldValue(cfg: AppConfig, key: keyof AppConfig): string {
+  return String(cfg[key] ?? '')
 }
 
-function applyNestedPatch(key: Field['key'], value: string, current: AppConfig): Partial<AppConfig> {
-  if (key.startsWith('smtp.')) {
-    const sub = key.split('.')[1] as keyof AppConfig['smtp']
-    return { smtp: { ...current.smtp, [sub]: sub === 'port' ? parseInt(value, 10) || 587 : value } }
+function applyPatch(key: keyof AppConfig, value: string): Partial<AppConfig> {
+  if (key === 'vaultAutoLockMinutes' || key === 'scanIntervalMinutes') {
+    return { [key]: parseInt(value, 10) || 15 }
   }
-  const k = key as keyof AppConfig
-  if (k === 'vaultAutoLockMinutes' || k === 'scanIntervalMinutes') {
-    return { [k]: parseInt(value, 10) || 15 }
-  }
-  return { [k]: value }
+  return { [key]: value }
 }
 
 export default function Advanced(): React.JSX.Element {
@@ -54,7 +41,7 @@ export default function Advanced(): React.JSX.Element {
     window.api.app.getConfig().then((cfg) => {
       setConfig(cfg)
       const init: Record<string, string> = {}
-      for (const f of FIELDS) init[f.key] = getNestedValue(cfg, f.key)
+      for (const f of FIELDS) init[f.key] = getFieldValue(cfg, f.key)
       setValues(init)
     })
   }, [])
@@ -69,7 +56,7 @@ export default function Advanced(): React.JSX.Element {
     setSaving(true)
     let patch: Partial<AppConfig> = {}
     for (const f of FIELDS) {
-      patch = { ...patch, ...applyNestedPatch(f.key, values[f.key] ?? '', config) }
+      patch = { ...patch, ...applyPatch(f.key, values[f.key] ?? '') }
     }
     const updated = await window.api.app.updateConfig(patch)
     setConfig(updated)

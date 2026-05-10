@@ -128,7 +128,6 @@ export interface AppConfig {
   vaultAutoLockMinutes: number;
   scanIntervalMinutes: number;
   scamCheckImap?: { host: string; user: string; password: string };
-  smtp: { host: string; port: number; user: string; password: string };
 }
 
 // The bridge exposed via contextBridge as window.api
