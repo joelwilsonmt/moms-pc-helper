@@ -54,19 +54,24 @@ function createWindow(): BrowserWindow {
     }
   })
 
-  mainWindow.on('ready-to-show', () => {
-    log.info('ready-to-show — showing window')
-    mainWindow.show()
-  })
+  // Show as soon as ready, or force-show after 10 s regardless
+  const showWindow = (): void => {
+    if (!mainWindow.isVisible()) {
+      log.info('showing window')
+      mainWindow.show()
+    }
+  }
+  mainWindow.on('ready-to-show', showWindow)
+  setTimeout(showWindow, 10_000)
 
-  // If renderer fails to load, show the window anyway so the error is visible
   mainWindow.webContents.on('did-fail-load', (_e, code, desc, url) => {
     log.error('did-fail-load', { code, desc, url })
-    mainWindow.show()
+    showWindow()
   })
 
   mainWindow.webContents.on('render-process-gone', (_e, details) => {
     log.error('render-process-gone', details)
+    showWindow()
   })
 
   mainWindow.webContents.setWindowOpenHandler((details) => {
