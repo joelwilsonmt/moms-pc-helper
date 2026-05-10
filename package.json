@@ -2,6 +2,7 @@
   "name": "moms-pc-helper",
   "version": "1.0.0",
   "description": "Mom's PC Helper — read-only PC health monitor for Jan",
+  "author": "Joel Wilson <joel.wilson.mt@gmail.com>",
   "main": "./out/main/index.js",
   "homepage": "./",
   "scripts": {
@@ -41,7 +42,7 @@
     },
     "nsis": {
       "oneClick": false,
-      "allowDirChange": false,
+      "allowToChangeInstallationDirectory": false,
       "perMachine": false,
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
